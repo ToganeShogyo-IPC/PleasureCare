@@ -1,8 +1,28 @@
 ﻿@page "/talking"
 <h1>問診</h1>
-
-
 <a href="/" class="btn btn-primary" role="button">ホームに戻る</a>
+<p>認知症かどうか調べるで(＾ｖ＾)ｂ</p>
 @code {
+    private readonly HttpClient Client = new HttpClient();
+
+    public class globalVar()
+    {
+        public List<ansResp> qAnswers = new List<ansResp>();
+    }
+
+    public void nextQues(int? nowAns = 0)
+    {
+        
+    }
     
+    private void postResult()
+    {
+        //postする処理をなんか書く
+    }
+
+    public class ansResp
+    {
+        public int qNum { get; set; }
+        public int score { get; set; }
+    }
 }

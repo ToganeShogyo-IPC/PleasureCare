@@ -2,20 +2,33 @@
 <h1>問診</h1>
 <a href="/" class="btn btn-primary" role="button">ホームに戻る</a>
 <p>認知症かどうか調べるで(＾ｖ＾)ｂ</p>
+
+<div class="row">
+    <div class="col-lg-12">
+        <input class="btn btn-primary" type="button" value="てすと" @onclick="getTest"/>
+    </div>
+    <p> @te </p>
+    <p>test: @data</p>
+</div>
 @code {
     private readonly HttpClient Client = new HttpClient();
-
-    public class globalVar()
-    {
-        public List<ansResp> qAnswers = new List<ansResp>();
-    }
-
+    
+    public List<ansResp> qAnswers = new List<ansResp>();
+    public string data;
+    public string te;
     public void nextQues(int? nowAns = 0)
     {
         
     }
+
+    public async void getTest()
+    {
+        te = "pushed";
+        var resp = await Client.GetStringAsync("https://api.schnetworks.net/v1/user.php");
+        data = resp;
+    }
     
-    private void postResult()
+    private async void postResult()
     {
         //postする処理をなんか書く
     }

@@ -1,8 +1,9 @@
 ﻿@page "/vital"
 <h1>バイタル</h1>
 <!-----
-    毎日記録するやつ
+    頻度低い
 ----->
+<p>体重</p>
 <div class="row mb-3">
     <div class="input-group">
         <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重"/>
@@ -10,10 +11,60 @@
     </div>
 </div>
 
-<p>起床時間</p>
-<p>就寝時間(昨夜)</p>
-<p></p>
+<!-----
+    毎日記録するやつ
+----->
+<p>就寝時間</p>
+<div class="row mb-3">
+    <div class="input-group">
+        <select class="form-control form-control-lg" id="syuusinHour">
+            <option value="" disabled selected>時</option>
+            @for (int i = 0; i < 24; i++)
+            {
+                <option value="@i.ToString("00")">@i</option>
+            }
+        </select>
+        <label class="input-group-text">時</label>
+        <select class="form-control form-control-lg" id="syuusinMinute">
+            <option value="" disabled selected>分</option>
+            @for (int i = 0; i < 60; i += 5)
+            {
+                <option value="@i.ToString("00")">@i.ToString("00")</option>
+            }
+        </select>
+        <label class="input-group-text">分</label>
+    </div>
+</div>
 
+<p>起床時間</p>
+<div class="row mb-3">
+    <div class="input-group">
+        <select class="form-control form-control-lg" id="kisyouHour">
+            <option value="" disabled selected>時</option>
+            @for (int i = 0; i < 24; i++)
+            {
+            <option value="@i.ToString("00")">@i</option>
+            }
+        </select>
+        <label class="input-group-text">時</label>
+        <select class="form-control form-control-lg" id="kisyouMinute">
+            <option value="" disabled selected>分</option>
+            @for (int i = 0; i < 60; i += 5)
+            {
+            <option value="@i.ToString("00")">@i.ToString("00")</option>
+            }
+        </select>
+        <label class="input-group-text">分</label>
+    </div>
+</div>
+
+
+
+<input type="button" class="btn btn-primary" value="Submit" @onclick="ResultSender"/>
 @code {
-    
+    private readonly HttpClient client = new HttpClient();
+    public void ResultSender()
+    {
+        
+    }
 }

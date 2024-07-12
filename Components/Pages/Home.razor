@@ -3,6 +3,15 @@
 
 <h1>ホーム</h1>
 @code{
+    private dynamic authid = AccountService.LoSaSettings("auth");
+
+    private void modalViewer()
+    {
+        if (authid.authid == null)
+        {
+            
+        }
+    }
 }
 <div class="container">
     <div class="row mb-2">

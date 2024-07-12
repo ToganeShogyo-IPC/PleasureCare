@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Schema;
 
 namespace SmileCare.Data
 {
@@ -65,7 +66,7 @@ namespace SmileCare.Data
         /// <param name="is_startup">起動時の何かか否か</param>
         public static async Task<LogAccRoot> LoginAccount(dynamic requestBody = null, bool is_startup=false)
         {
-            string authid = LoSaSetttings("authid");
+            var authid = LoSaSettings("authid");
             if (authid == null && !is_startup)
             {
                 HttpContent reqBody = new FormUrlEncodedContent(requestBody);
@@ -77,12 +78,19 @@ namespace SmileCare.Data
                 acb.authid = authid;
                 if (js_l.RespInfo.Code < 300 && js_l.RespInfo.Code >= 200)
                 {
-                    LoSaSetttings("authid", true,acb);
+                    LoSaSettings("authid", true,acb);
+                    HttpResponseMessage LgResp = await client.GetAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid}");
+                    string Lgjson = await LgResp.Content.ReadAsStringAsync();
+                    var Lgjs_l = JsonConvert.DeserializeObject<LogAccRoot>(Lgjson);
+                    if (Lgjs_l.RespInfo.Code < 300 && Lgjs_l.RespInfo.Code >= 200)
+                    {
+                        return Lgjs_l;
+                    }
                 }
             }
             else if(is_startup && authid != null)
             {
-                HttpResponseMessage resp = await client.GetAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid}");
+                HttpResponseMessage resp = await client.GetAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid.authid}");
                 string json = await resp.Content.ReadAsStringAsync();
                 var js_l = JsonConvert.DeserializeObject<LogAccRoot>(json);
                 if (js_l.RespInfo.Code < 300 && js_l.RespInfo.Code >= 200)
@@ -90,11 +98,21 @@ namespace SmileCare.Data
                     return js_l;
                 }
             }
+            return new LogAccRoot();
         }
 
-        public static async void LogoutAccount(string authid)
+        public static async Task<String> LogoutAccount(string authid)
         {
-            var resp = await client.DeleteAsync($"https://api.schnetworks.net/v1/auth.php?type=logout&authid={authid}");
+            HttpResponseMessage resp = await client.DeleteAsync($"https://api.schnetworks.net/v1/auth.php?type=logout&authid={authid}");
+            string json = await resp.Content.ReadAsStringAsync();
+            var js_l = JsonConvert.DeserializeObject<AuthIDRoot>(json);
+            if (js_l.RespInfo.Code == 200)
+            {
+                LoSaSettings("auth", true, new AccountBody());
+                return "OK";
+            }
+
+            return $"Error: {js_l.RespInfo.HTTPStateCode}";
         }
 
         public static void GetAccountState(string uuid = null)
@@ -108,7 +126,7 @@ namespace SmileCare.Data
         /// <param name="w_infotype">読み書きする設定の種類</param>
         /// <param name="is_save">true→保存 | false→読み込み</param>
         /// <returns></returns>
-        public static dynamic LoSaSetttings(string? w_infotype = null, bool is_save = false, dynamic otherhikisu = null)
+        public static dynamic LoSaSettings(string? w_infotype = null, bool is_save = false, dynamic otherhikisu = null)
         {
             switch (w_infotype)
             {
@@ -116,24 +134,39 @@ namespace SmileCare.Data
                     string filePath = Path.Combine(FileSystem.Current.AppDataDirectory, "authid.json");
                     if (is_save)
                     {
-                        AccountBody aby = otherhikisu;
-                        aby.authid = aby.authid;
-                        string take = JsonConvert.SerializeObject(aby);
-                        File.WriteAllText(filePath, take);
+                        try
+                        {
+                            AccountBody aby = otherhikisu;
+                            aby.authid = aby.authid;
+                            string take = JsonConvert.SerializeObject(aby);
+                            File.WriteAllText(filePath, take);
+                        }
+                        catch
+                        {
+                            return null;
+                        }
                     }
                     else
                     {
-                        if (File.Exists(filePath))
+                        try
                         {
-                            string json = File.ReadAllText(filePath);
-                            return JsonConvert.DeserializeObject<AccountBody>(json);
+                            if (File.Exists(filePath))
+                            {
+                                string json = File.ReadAllText(filePath);
+                                return JsonConvert.DeserializeObject<AccountBody>(json);
+                            }
                         }
-                        return new List<string>();
+                        catch
+                        {
+                            return -1;
+                        }
+
+                        return null;
                     }
                     break;
             }
 
-            return new List<string>();
+            return null;
         }
     }
 }

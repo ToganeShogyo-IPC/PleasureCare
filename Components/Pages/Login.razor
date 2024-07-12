@@ -1,18 +1,40 @@
 ﻿@page "/Login"
+@using SmileCare.Data
+@inject NavigationManager NavigationManager
 
 <h3>ログイン</h3>
 <div class="row mb-3">
     <div class="input-group">
-        <input type="text" class="form-control form-control-lg" id="mail" placeholder="メールアドレス"/>
+        <input type="text" class="form-control form-control-lg" id="mail" placeholder="メールアドレス" @bind="mail"/>
     </div>
 </div>
 
 <div class="row mb-3">
     <div class="input-group">
-        <input type="password" class="form-control form-control-lg" id="pass" placeholder="パスワード"/>
+        <input type="password" class="form-control form-control-lg" id="pass" placeholder="パスワード" @bind="password"/>
     </div>
 </div>
 
 <div class="row">
-    <input type="button" class ="btn btn-primary" value="ログイン" />
+    <input type="button" class ="btn btn-primary" value="ログイン" @onclick="ClickedSubmit" />
 </div>
+
+@code{
+    [CascadingParameter]
+    private ShareValues? ShareValues { get; set; }
+    
+    string mail;
+    string password;
+    
+    private void ClickedSubmit()
+    {
+        AccountService.AccountLoginBody aclb = new AccountService.AccountLoginBody()
+        {
+            mail = mail,
+            pass = password
+        };
+        ShareValues.value = AccountService.LoginAccount(aclb).Result.LogAccDataBody;
+        NavigationManager.NavigateTo("./Home");
+    }
+
+}

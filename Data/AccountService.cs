@@ -4,8 +4,21 @@ using Newtonsoft.Json.Schema;
 
 namespace SmileCare.Data
 {
+    public class ShareValues
+    {
+        public AccountService.LogAccDataBody value { get; set;}
+
+        public void BrokeSession() => value = new AccountService.LogAccDataBody();
+    }
+    
     public class AccountService
     {
+        public class AccountLoginBody()
+        {
+            public string mail { get; set; }
+            public string pass { get; set; }
+        }
+        
         public class AccountBody
         {
             public string authid { get; set; }
@@ -36,7 +49,7 @@ namespace SmileCare.Data
         public class LogAccRoot
         {
             [JsonPropertyName("DataBody")]
-            public List<LogAccDataBody> LogAccDataBody { get; set; }
+            public LogAccDataBody LogAccDataBody { get; set; }
             public RespInfo RespInfo { get; set; }
         }
         /// <summary>

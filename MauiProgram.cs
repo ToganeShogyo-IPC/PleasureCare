@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SmileCare.Data;
 
 namespace SmileCare;
 
@@ -12,6 +13,7 @@ public static class MauiProgram
             .ConfigureFonts(fonts => { fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"); });
 
         builder.Services.AddMauiBlazorWebView();
+        builder.Services.AddCascadingValue(_ => new ShareValues());
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();

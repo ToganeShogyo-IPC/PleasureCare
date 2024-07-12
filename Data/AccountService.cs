@@ -7,8 +7,7 @@ namespace SmileCare.Data
     {
         public class AccountBody
         {
-            public static string mail { get; set; }
-            public static string pass { get; set; }
+            public string authid { get; set; }
         }
         
         /// <summary>
@@ -57,41 +56,84 @@ namespace SmileCare.Data
             public RespInfo RespInfo { get; set; }
         }
 
-        private readonly HttpClient client = new HttpClient();
+        private static readonly HttpClient client = new HttpClient();
         /// <summary>
         /// アカウントログイン作業(起動時・通常ログイン時共通)
         /// 起動時だと認証ID生成の手順を吹っ飛ばして通常の認証に飛びまｓ。
         /// </summary>
         /// <param name="requestBody">リクエストで飛ばすやつ</param>
         /// <param name="is_startup">起動時の何かか否か</param>
-        public async void LoginAccount(dynamic requestBody, bool is_startup)
+        public static async Task<LogAccRoot> LoginAccount(dynamic requestBody = null, bool is_startup=false)
         {
-            string filePath = Path.Combine(FileSystem.Current.AppDataDirectory, "userinfo.json");
-            string authid = "";
-            if (!is_startup)
+            string authid = LoSaSetttings("authid");
+            if (authid == null && !is_startup)
             {
                 HttpContent reqBody = new FormUrlEncodedContent(requestBody);
-                HttpResponseMessage _resp = await client.PostAsync("https://api.schnetworks.net/v1/auth.php?type=login", reqBody);
-                string json = await _resp.Content.ReadAsStringAsync();
+                HttpResponseMessage resp = await client.PostAsync("https://api.schnetworks.net/v1/auth.php?type=login", reqBody);
+                string json = await resp.Content.ReadAsStringAsync();
                 var js_l = JsonConvert.DeserializeObject<AuthIDRoot>(json);
                 authid = js_l.AuthIDDataBody.authid;
+                AccountBody acb = new AccountBody();
+                acb.authid = authid;
+                if (js_l.RespInfo.Code < 300 && js_l.RespInfo.Code >= 200)
+                {
+                    LoSaSetttings("authid", true,acb);
+                }
             }
-            var resp = await client.GetStringAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid}");
-            var json1 = JsonConvert.DeserializeObject<LogAccRoot>(resp);
-            if (json1.RespInfo.Code == 200)
+            else if(is_startup && authid != null)
             {
-                
+                HttpResponseMessage resp = await client.GetAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid}");
+                string json = await resp.Content.ReadAsStringAsync();
+                var js_l = JsonConvert.DeserializeObject<LogAccRoot>(json);
+                if (js_l.RespInfo.Code < 300 && js_l.RespInfo.Code >= 200)
+                {
+                    return js_l;
+                }
             }
         }
 
-        public async void LogoutAccount(string authid)
+        public static async void LogoutAccount(string authid)
         {
             var resp = await client.DeleteAsync($"https://api.schnetworks.net/v1/auth.php?type=logout&authid={authid}");
         }
 
-        public void GetAccountState(string uuid = null)
+        public static void GetAccountState(string uuid = null)
         {
 
+        }
+
+        /// <summary>
+        /// 設定の読み込みと保存をしたりします
+        /// </summary>
+        /// <param name="w_infotype">読み書きする設定の種類</param>
+        /// <param name="is_save">true→保存 | false→読み込み</param>
+        /// <returns></returns>
+        public static dynamic LoSaSetttings(string? w_infotype = null, bool is_save = false, dynamic otherhikisu = null)
+        {
+            switch (w_infotype)
+            {
+                case "authid":
+                    string filePath = Path.Combine(FileSystem.Current.AppDataDirectory, "authid.json");
+                    if (is_save)
+                    {
+                        AccountBody aby = otherhikisu;
+                        aby.authid = aby.authid;
+                        string take = JsonConvert.SerializeObject(aby);
+                        File.WriteAllText(filePath, take);
+                    }
+                    else
+                    {
+                        if (File.Exists(filePath))
+                        {
+                            string json = File.ReadAllText(filePath);
+                            return JsonConvert.DeserializeObject<AccountBody>(json);
+                        }
+                        return new List<string>();
+                    }
+                    break;
+            }
+
+            return new List<string>();
         }
     }
 }

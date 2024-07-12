@@ -5,6 +5,8 @@
 @code{
     [CascadingParameter]
     private ShareValues? ShareValues { get; set; }
+
+    string debugtext;
     
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -22,6 +24,8 @@
                     Task<AccountService.LogAccRoot> acc = AccountService.LoginAccount(is_startup:true);
                     ShareValues.value = acc.Result.LogAccDataBody;
                 }
+
+                debugtext = ShareValues.value.name;
             }
             catch
             {
@@ -33,7 +37,7 @@
     }
 
 }
-<p> @ShareValues.value.name; </p>
+<p> @debugtext; </p>
 <div class="container">
     <div class="row mb-2">
         <div class="col-sm-12">

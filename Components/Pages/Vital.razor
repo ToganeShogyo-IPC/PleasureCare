@@ -1,6 +1,10 @@
 ﻿@page "/vital"
 <h1>バイタル</h1>
 <!-----
+    初回だけ
+    身長
+----->
+<!-----
     頻度低い
 ----->
 <p>体重</p>
@@ -12,7 +16,7 @@
 </div>
 
 <!-----
-    毎日記録するやつ
+    毎朝記録するやつ
 ----->
 <p>就寝時間</p>
 <div class="row mb-3">
@@ -43,7 +47,7 @@
             <option value="" disabled selected>時</option>
             @for (int i = 0; i < 24; i++)
             {
-            <option value="@i.ToString("00")">@i</option>
+                <option value="@i.ToString("00")">@i</option>
             }
         </select>
         <label class="input-group-text">時</label>
@@ -51,16 +55,38 @@
             <option value="" disabled selected>分</option>
             @for (int i = 0; i < 60; i += 5)
             {
-            <option value="@i.ToString("00")">@i.ToString("00")</option>
+                <option value="@i.ToString("00")">@i.ToString("00")</option>
             }
         </select>
         <label class="input-group-text">分</label>
     </div>
 </div>
 
+<!-----
+    毎晩記録するやつ
+----->
+<p>歩数</p>
+<p>食事の内容</p>
+<div class="row mb-3">
+    <div class="input-group">
+        <textarea class="form-control form-control-lg" id="shokujiNaiyoBox" placeholder="食事の内容を入力してください" onfocus="scrollIntoView(this)"></textarea>
+    </div>
+</div>
+
+
+
+
 
 
 <input type="button" class="btn btn-primary" value="Submit" @onclick="ResultSender"/>
+<!-----
+    サイズ調整
+----->
+<script>
+    function scrollIntoView(element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+</script>
 @code {
     private readonly HttpClient client = new HttpClient();
     public void ResultSender()

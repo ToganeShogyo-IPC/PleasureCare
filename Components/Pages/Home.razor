@@ -5,27 +5,27 @@
 @code{
     [CascadingParameter]
     private ShareValues? ShareValues { get; set; }
-
     string debugtext;
-    
+    string logoutcore;
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var setting = AccountService.LoSaSettings("auth");
+            AccountService.AccountBody? setting = AccountService.LoSaSettings("authid");
             try
             {
-                if (typeof(AccountService.AccountBody) != setting.GetType())
+                if (setting==null)
                 {
                     NavigationManager.NavigateTo("./Login");
                 }
-                else if (typeof(AccountService.AccountBody) != setting.GetType())
+                else if (setting.authid != null)
                 {
                     Task<AccountService.LogAccRoot> acc = AccountService.LoginAccount(is_startup:true);
-                    ShareValues.value = acc.Result.LogAccDataBody;
+                    ShareValues.value = acc.Result.LogAccDataBody[0];
+                    debugtext = ShareValues.value.name;
+                    logoutcore = "";
+                    StateHasChanged();
                 }
-
-                debugtext = ShareValues.value.name;
             }
             catch
             {
@@ -37,7 +37,7 @@
     }
 
 }
-<p> @debugtext; </p>
+<p> @debugtext </p>
 <div class="container">
     <div class="row mb-2">
         <div class="col-sm-12">
@@ -79,4 +79,5 @@
             </div>
         </div>
     </div>
+    @logoutcore
 </div>

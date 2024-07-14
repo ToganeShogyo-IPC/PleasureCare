@@ -12,7 +12,7 @@ namespace SmileCare.Data
     
     public class AccountService
     {
-        public class AccountLoginBody()
+        public class AccountLoginBody
         {
             public string mail { get; set; }
             public string pass { get; set; }
@@ -47,8 +47,8 @@ namespace SmileCare.Data
         /// </summary>
         public class LogAccRoot
         {
-            [JsonPropertyName("DataBody")]
-            public LogAccDataBody LogAccDataBody { get; set; }
+            [JsonProperty("DataBody")]
+            public List<LogAccDataBody> LogAccDataBody { get; set; }
             public RespInfo RespInfo { get; set; }
         }
         /// <summary>
@@ -64,9 +64,9 @@ namespace SmileCare.Data
         /// </summary>
         public class AuthIDRoot
         {
-            [JsonPropertyName("DataBody")]
-            public AuthIDDataBody AuthIDDataBody { get; set; }
-            public RespInfo RespInfo { get; set; }
+            [JsonProperty("DataBody")]
+            public required AuthIDDataBody AuthIDDataBody { get; set; }
+            public required RespInfo RespInfo { get; set; }
         }
 
         private static readonly HttpClient client = new HttpClient();
@@ -79,19 +79,24 @@ namespace SmileCare.Data
         public static async Task<LogAccRoot> LoginAccount(dynamic requestBody = null, bool is_startup=false)
         {
             var authid = LoSaSettings("authid");
-            if (authid == null && !is_startup)
+            if (authid == null && !is_startup) // authidがnull かつ 起動時処理ではない
             {
-                HttpContent reqBody = new FormUrlEncodedContent(requestBody);
-                HttpResponseMessage resp = await client.PostAsync("https://api.schnetworks.net/v1/auth.php?type=login", reqBody);
+                Dictionary<string, string> requestbodies = new Dictionary<string, string>()
+                {
+                    {"mail", requestBody.mail},
+                    {"pass", requestBody.pass}
+                };
+                HttpContent reqBody = new FormUrlEncodedContent(requestbodies);
+                HttpResponseMessage resp = await client.PostAsync("https://api.schnetworks.net/v1/auth.php?type=login", reqBody).ConfigureAwait(false);
                 string json = await resp.Content.ReadAsStringAsync();
                 var js_l = JsonConvert.DeserializeObject<AuthIDRoot>(json);
-                authid = js_l.AuthIDDataBody.authid;
-                AccountBody acb = new AccountBody();
+                authid = js_l.AuthIDDataBody.authid; // 認証用id生成終了
+                AccountBody acb = new AccountBody(); // ファイル書き込み用クラス生成
                 acb.authid = authid;
-                if (js_l.RespInfo.Code < 300 && js_l.RespInfo.Code >= 200)
+                if (js_l.RespInfo.Code < 300 && js_l.RespInfo.Code >= 200) //200番台の場合
                 {
-                    LoSaSettings("authid", true,acb);
-                    HttpResponseMessage LgResp = await client.GetAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid}");
+                    LoSaSettings("authid", true,acb); // 保存処理
+                    HttpResponseMessage LgResp = await client.GetAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid}").ConfigureAwait(false);
                     string Lgjson = await LgResp.Content.ReadAsStringAsync();
                     var Lgjs_l = JsonConvert.DeserializeObject<LogAccRoot>(Lgjson);
                     if (Lgjs_l.RespInfo.Code < 300 && Lgjs_l.RespInfo.Code >= 200)
@@ -102,7 +107,7 @@ namespace SmileCare.Data
             }
             else if(is_startup && authid != null)
             {
-                HttpResponseMessage resp = await client.GetAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid.authid}");
+                HttpResponseMessage resp = await client.GetAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid.authid}").ConfigureAwait(false);
                 string json = await resp.Content.ReadAsStringAsync();
                 var js_l = JsonConvert.DeserializeObject<LogAccRoot>(json);
                 if (js_l.RespInfo.Code < 300 && js_l.RespInfo.Code >= 200)
@@ -115,7 +120,7 @@ namespace SmileCare.Data
 
         public static async Task<String> LogoutAccount(string authid)
         {
-            HttpResponseMessage resp = await client.DeleteAsync($"https://api.schnetworks.net/v1/auth.php?type=logout&authid={authid}");
+            HttpResponseMessage resp = await client.DeleteAsync($"https://api.schnetworks.net/v1/auth.php?type=logout&authid={authid}").ConfigureAwait(false);
             string json = await resp.Content.ReadAsStringAsync();
             var js_l = JsonConvert.DeserializeObject<AuthIDRoot>(json);
             if (js_l.RespInfo.Code == 200)
@@ -170,7 +175,7 @@ namespace SmileCare.Data
                         }
                         catch
                         {
-                            return -1;
+                            return null;
                         }
 
                         return null;

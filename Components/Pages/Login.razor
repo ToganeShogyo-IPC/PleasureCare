@@ -26,15 +26,15 @@
     string mail;
     string password;
     
-    private void ClickedSubmit()
+    private async void ClickedSubmit()
     {
         AccountService.AccountLoginBody aclb = new AccountService.AccountLoginBody()
         {
             mail = mail,
             pass = password
         };
-        ShareValues.value = AccountService.LoginAccount(aclb).Result.LogAccDataBody;
-        NavigationManager.NavigateTo("./Home");
+        ShareValues.value = AccountService.LoginAccount(aclb).Result.LogAccDataBody[0];
+        NavigationManager.NavigateTo("./");
     }
 
 }

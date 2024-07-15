@@ -12,6 +12,13 @@ namespace SmileCare.Data
     
     public class AccountService
     {
+        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+        public class DelAccountAuthCode
+        {
+            public List<string> DataBody { get; set; }
+            public RespInfo RespInfo { get; set; }
+        }
+
         public class AccountLoginBody
         {
             public string mail { get; set; }
@@ -118,18 +125,27 @@ namespace SmileCare.Data
             return new LogAccRoot();
         }
 
-        public static async Task<String> LogoutAccount(string authid)
+        public static async Task<String> LogoutAccount(string authid = null,bool is_local=false)
         {
-            HttpResponseMessage resp = await client.DeleteAsync($"https://api.schnetworks.net/v1/auth.php?type=logout&authid={authid}").ConfigureAwait(false);
-            string json = await resp.Content.ReadAsStringAsync();
-            var js_l = JsonConvert.DeserializeObject<AuthIDRoot>(json);
-            if (js_l.RespInfo.Code == 200)
+            if (!is_local)
             {
-                LoSaSettings("auth", true, new AccountBody());
-                return "OK";
+                HttpResponseMessage resp = await client.DeleteAsync($"https://api.schnetworks.net/v1/auth.php?type=logout&authid={authid}").ConfigureAwait(false);
+                string json = await resp.Content.ReadAsStringAsync();
+                DelAccountAuthCode? js_l = JsonConvert.DeserializeObject<DelAccountAuthCode>(json);
+                Console.WriteLine(js_l.RespInfo.Code);
+                if (js_l.RespInfo.Code == 200)
+                {
+                    LoSaSettings("authid", true, null);
+                    return "OK";
+                }
+                return $"Error: {js_l.RespInfo.HTTPStateCode}";
             }
-
-            return $"Error: {js_l.RespInfo.HTTPStateCode}";
+            else if (is_local)
+            {
+                LoSaSettings("authid", true, null);
+                return null;
+            }
+            return null;
         }
 
         public static void GetAccountState(string uuid = null)
@@ -153,10 +169,16 @@ namespace SmileCare.Data
                     {
                         try
                         {
-                            AccountBody aby = otherhikisu;
-                            aby.authid = aby.authid;
-                            string take = JsonConvert.SerializeObject(aby);
-                            File.WriteAllText(filePath, take);
+                            if(otherhikisu == null)
+                            {
+                                File.Delete(filePath);
+                            }
+                            else {
+                                AccountBody aby = otherhikisu;
+                                aby.authid = aby.authid;
+                                string take = JsonConvert.SerializeObject(aby);
+                                File.WriteAllText(filePath, take);
+                            }
                         }
                         catch
                         {

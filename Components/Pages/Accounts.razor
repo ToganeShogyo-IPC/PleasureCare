@@ -1,8 +1,18 @@
 ﻿@page "/Accounts"
+@using SmileCare.Data
+@inject NavigationManager NavigationManager
 <h3>アカウント設定</h3>
 <p>設定できる項目はありません。</p>
 <p>今後のアップデート等でもしかしたら実装するかもしれません</p>
 
+<input type="button" value="ログアウト" @onclick="onclick_logout" />
 @code {
+    [CascadingParameter]
+    private ShareValues? ShareValues { get; set; }
 
+    public void onclick_logout()
+    {
+        AccountService.LogoutAccount(AccountService.LoSaSettings(w_infotype: "authid").authid);
+        NavigationManager.NavigateTo("./");
+    }
 }

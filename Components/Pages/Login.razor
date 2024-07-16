@@ -3,6 +3,7 @@
 @inject NavigationManager NavigationManager
 
 <h3>ログイン</h3>
+@((MarkupString)message)
 <div class="row mb-3">
     <div class="input-group">
         <input type="text" class="form-control form-control-lg" id="mail" placeholder="メールアドレス" @bind="mail"/>
@@ -22,10 +23,12 @@
 @code{
     [CascadingParameter]
     private ShareValues? ShareValues { get; set; }
-    
+
     string mail;
     string password;
-    
+
+    string message;
+
     private async void ClickedSubmit()
     {
         AccountService.AccountLoginBody aclb = new AccountService.AccountLoginBody()
@@ -33,8 +36,23 @@
             mail = mail,
             pass = password
         };
-        ShareValues.value = AccountService.LoginAccount(aclb).Result.LogAccDataBody[0];
-        NavigationManager.NavigateTo("./");
+        AccountService.LogAccRoot? log = AccountService.LoginAccount(aclb).Result;
+        if(log != null)
+        {
+            if(log.RespInfo.Code == 200)
+            {
+                ShareValues.value = log.LogAccDataBody[0];
+                NavigationManager.NavigateTo("./");
+            }else if (log.RespInfo.Code == 404)
+            {
+                message = "<p class='alert alert-danger'>パスワードまたはメールアドレスが間違っています。</p>";
+                StateHasChanged();
+            }else if(log.RespInfo.Code == 409)
+            {
+                message = "<p class='alert alert-danger'>複数端末からの同時ログインはできません。</p>";
+                StateHasChanged();
+            }
+        }
     }
 
 }

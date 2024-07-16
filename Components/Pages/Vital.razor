@@ -10,7 +10,7 @@
 <p>体重</p>
 <div class="row mb-3">
     <div class="input-group">
-        <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重"/>
+        <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重" @bind="weight"/>
         <label class="input-group-text">Kg</label>
     </div>
 </div>
@@ -21,7 +21,7 @@
 <p>就寝時間</p>
 <div class="row mb-3">
     <div class="input-group">
-        <select class="form-control form-control-lg" id="syuusinHour">
+        <select class="form-control form-control-lg" id="syuusinHour" @bind="gotobedh">
             <option value="" disabled selected>時</option>
             @for (int i = 0; i < 24; i++)
             {
@@ -29,7 +29,7 @@
             }
         </select>
         <label class="input-group-text">時</label>
-        <select class="form-control form-control-lg" id="syuusinMinute">
+        <select class="form-control form-control-lg" id="syuusinMinute" @bind="gotobedm">
             <option value="" disabled selected>分</option>
             @for (int i = 0; i < 60; i += 5)
             {
@@ -43,7 +43,7 @@
 <p>起床時間</p>
 <div class="row mb-3">
     <div class="input-group">
-        <select class="form-control form-control-lg" id="kisyouHour">
+        <select class="form-control form-control-lg" id="kisyouHour" @bind="wakeuph" >
             <option value="" disabled selected>時</option>
             @for (int i = 0; i < 24; i++)
             {
@@ -51,7 +51,7 @@
             }
         </select>
         <label class="input-group-text">時</label>
-        <select class="form-control form-control-lg" id="kisyouMinute">
+        <select class="form-control form-control-lg" id="kisyouMinute" @bind="wakeupm">
             <option value="" disabled selected>分</option>
             @for (int i = 0; i < 60; i += 5)
             {
@@ -66,17 +66,19 @@
     毎晩記録するやつ
 ----->
 <p>歩数</p>
+<div class="row mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="歩数" @bind="steps" />
+        <label class="input-group-text">歩</label>
+    </div>
+</div>
+
 <p>食事の内容</p>
 <div class="row mb-3">
     <div class="input-group">
         <textarea class="form-control form-control-lg" id="shokujiNaiyoBox" placeholder="食事の内容を入力してください" onfocus="scrollIntoView(this)"></textarea>
     </div>
 </div>
-
-
-
-
-
 
 <input type="button" class="btn btn-primary" value="Submit" @onclick="ResultSender"/>
 <!-----
@@ -87,10 +89,35 @@
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 </script>
+
+
 @code {
+    string? weight;
+    string? steps;
+    string? wakeuph;
+    string? wakeupm;
+    string? gotobedh;
+    string? gotobedm;
+
     private readonly HttpClient client = new HttpClient();
-    public void ResultSender()
+
+    public class VitalDataSets{
+        public double weight { get; set; }
+        public int steps { get; set; }
+        public string? wakeup { get; set; }
+        public string? gotobed { get; set; }
+    }
+
+    public void ResultSender() //送信
     {
-        
+        VitalDataSets vds = new VitalDataSets();
+        double.TryParse(weight,out double weightd);
+        int.TryParse(steps, out int stepi);
+        vds.weight = weightd;
+        vds.steps = stepi;
+        vds.gotobed = gotobedh + ":" + gotobedm;
+        vds.wakeup = wakeuph + ":" + wakeupm;
+
+        Console.WriteLine("");
     }
 }

@@ -27,6 +27,7 @@
         te = "pushed";
         var resp = await Client.GetStringAsync("https://api.schnetworks.net/v1/user.php");
         data = resp;
+        StateHasChanged();
     }
     
     private async void postResult()

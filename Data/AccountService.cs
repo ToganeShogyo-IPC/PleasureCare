@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
 
 namespace SmileCare.Data
@@ -6,13 +7,13 @@ namespace SmileCare.Data
     public class ShareValues
     {
         public AccountService.LogAccDataBody value { get; set;}
+        public int ErrorStatus { get; set; }
 
         public void BrokeSession() => value = new AccountService.LogAccDataBody();
     }
     
     public class AccountService
     {
-        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
         public class DelAccountAuthCode
         {
             public List<string> DataBody { get; set; }
@@ -83,7 +84,7 @@ namespace SmileCare.Data
         /// </summary>
         /// <param name="requestBody">リクエストで飛ばすやつ</param>
         /// <param name="is_startup">起動時の何かか否か</param>
-        public static async Task<LogAccRoot> LoginAccount(dynamic requestBody = null, bool is_startup=false)
+        public static async Task<LogAccRoot>? LoginAccount(dynamic requestBody = null, bool is_startup=false)
         {
             var authid = LoSaSettings("authid");
             if (authid == null && !is_startup) // authidがnull かつ 起動時処理ではない
@@ -97,22 +98,51 @@ namespace SmileCare.Data
                 HttpResponseMessage resp = await client.PostAsync("https://api.schnetworks.net/v1/auth.php?type=login", reqBody).ConfigureAwait(false);
                 string json = await resp.Content.ReadAsStringAsync();
                 var js_l = JsonConvert.DeserializeObject<AuthIDRoot>(json);
-                authid = js_l.AuthIDDataBody.authid; // 認証用id生成終了
-                AccountBody acb = new AccountBody(); // ファイル書き込み用クラス生成
-                acb.authid = authid;
-                if (js_l.RespInfo.Code < 300 && js_l.RespInfo.Code >= 200) //200番台の場合
-                {
-                    LoSaSettings("authid", true,acb); // 保存処理
-                    HttpResponseMessage LgResp = await client.GetAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid}").ConfigureAwait(false);
-                    string Lgjson = await LgResp.Content.ReadAsStringAsync();
-                    var Lgjs_l = JsonConvert.DeserializeObject<LogAccRoot>(Lgjson);
-                    if (Lgjs_l.RespInfo.Code < 300 && Lgjs_l.RespInfo.Code >= 200)
+                try {
+                    authid = js_l.AuthIDDataBody.authid; // 認証用id生成終了
+                    AccountBody acb = new AccountBody(); // ファイル書き込み用クラス生成
+                    acb.authid = authid;
+                    if (js_l.RespInfo.Code < 300 && js_l.RespInfo.Code >= 200) //200番台の場合
                     {
-                        return Lgjs_l;
+                        LoSaSettings("authid", true, acb); // 保存処理
+                        HttpResponseMessage LgResp = await client.GetAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid}").ConfigureAwait(false);
+                        string Lgjson = await LgResp.Content.ReadAsStringAsync();
+                        var Lgjs_l = JsonConvert.DeserializeObject<LogAccRoot>(Lgjson);
+                        if (Lgjs_l.RespInfo.Code < 300 && Lgjs_l.RespInfo.Code >= 200)
+                        {
+                            return Lgjs_l;
+                        }
+                    }
+                    else if (((int)resp.StatusCode) < 500 && ((int)resp.StatusCode) >= 400)
+                    {
+                        return null;
+                    }
+                }
+                catch
+                {
+                    if((int)resp.StatusCode == 404)
+                    {
+                        LogAccRoot lg = new LogAccRoot();
+                        RespInfo respInfo = new RespInfo()
+                        {
+                            Code = (int)resp.StatusCode,
+                        };
+                        lg.RespInfo= respInfo;
+                        return lg;
+                    }
+                    if((int)resp.StatusCode == 409)
+                    {
+                        LogAccRoot lg = new LogAccRoot();
+                        RespInfo respInfo = new RespInfo()
+                        {
+                            Code = (int)resp.StatusCode,
+                        };
+                        lg.RespInfo = respInfo;
+                        return lg;
                     }
                 }
             }
-            else if(is_startup && authid != null)
+            else if (is_startup && authid != null)
             {
                 HttpResponseMessage resp = await client.GetAsync($"https://api.schnetworks.net/v1/auth.php?type=login&authid={authid.authid}").ConfigureAwait(false);
                 string json = await resp.Content.ReadAsStringAsync();

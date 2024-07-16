@@ -14,7 +14,7 @@ namespace SmileCare.Data
     
     public class AccountService
     {
-        public class DelAccountAuthCode
+        public class OtherAccountRoot
         {
             public List<string> DataBody { get; set; }
             public RespInfo RespInfo { get; set; }
@@ -120,7 +120,17 @@ namespace SmileCare.Data
                 }
                 catch
                 {
-                    if((int)resp.StatusCode == 404)
+                    if ((int)resp.StatusCode == 403)
+                    {
+                        LogAccRoot lg = new LogAccRoot();
+                        RespInfo respInfo = new RespInfo()
+                        {
+                            Code = (int)resp.StatusCode,
+                        };
+                        lg.RespInfo = respInfo;
+                        return lg;
+                    }
+                    if ((int)resp.StatusCode == 404)
                     {
                         LogAccRoot lg = new LogAccRoot();
                         RespInfo respInfo = new RespInfo()
@@ -161,7 +171,7 @@ namespace SmileCare.Data
             {
                 HttpResponseMessage resp = await client.DeleteAsync($"https://api.schnetworks.net/v1/auth.php?type=logout&authid={authid}").ConfigureAwait(false);
                 string json = await resp.Content.ReadAsStringAsync();
-                DelAccountAuthCode? js_l = JsonConvert.DeserializeObject<DelAccountAuthCode>(json);
+                OtherAccountRoot? js_l = JsonConvert.DeserializeObject<OtherAccountRoot>(json);
                 Console.WriteLine(js_l.RespInfo.Code);
                 if (js_l.RespInfo.Code == 200)
                 {

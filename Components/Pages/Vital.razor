@@ -1,4 +1,7 @@
 ﻿@page "/vital"
+@using SmileCare.Data
+@inject NavigationManager NavigationManager
+
 <h1>バイタル</h1>
 <!-----
     初回だけ
@@ -7,6 +10,7 @@
 <!-----
     頻度低い
 ----->
+<div style = "@((MarkupString)sw_form)">
 <p>体重</p>
 <div class="row mb-3">
     <div class="input-group">
@@ -72,15 +76,11 @@
         <label class="input-group-text">歩</label>
     </div>
 </div>
-
-<p>食事の内容</p>
-<div class="row mb-3">
-    <div class="input-group">
-        <textarea class="form-control form-control-lg" id="shokujiNaiyoBox" placeholder="食事の内容を入力してください" onfocus="scrollIntoView(this)"></textarea>
-    </div>
 </div>
+@((MarkupString)message)
 
-<input type="button" class="btn btn-primary" value="Submit" @onclick="ResultSender"/>
+<a href="/" style="@((MarkupString)backbutton)" class="btn btn-primary" >ホームに戻る</a>
+<input style="@((MarkupString)sw_form)" type="button" class="btn btn-primary" value="Submit" @onclick="ResultSender" />
 <!-----
     サイズ調整
 ----->
@@ -92,32 +92,44 @@
 
 
 @code {
-    string? weight;
-    string? steps;
-    string? wakeuph;
-    string? wakeupm;
-    string? gotobedh;
-    string? gotobedm;
+    string weight;
+    string steps;
+    string wakeuph;
+    string wakeupm;
+    string gotobedh;
+    string gotobedm;
+    string message;
+    string sw_form;
+    string backbutton = "display: none";
 
     private readonly HttpClient client = new HttpClient();
+    [CascadingParameter]
+    private ShareValues? ShareValues { get; set; }
 
-    public class VitalDataSets{
-        public double weight { get; set; }
-        public int steps { get; set; }
-        public string? wakeup { get; set; }
-        public string? gotobed { get; set; }
-    }
-
-    public void ResultSender() //送信
+    private async void ResultSender() //送信
     {
-        VitalDataSets vds = new VitalDataSets();
-        double.TryParse(weight,out double weightd);
-        int.TryParse(steps, out int stepi);
-        vds.weight = weightd;
-        vds.steps = stepi;
-        vds.gotobed = gotobedh + ":" + gotobedm;
-        vds.wakeup = wakeuph + ":" + wakeupm;
-
-        Console.WriteLine("");
+        Dictionary<string, string> vds = new Dictionary<string, string>()
+        {
+            { "uuid", ShareValues.value.uuid},
+            { "weight",weight},
+            { "steps", steps},
+            { "gotobed",gotobedh + ":" + gotobedm},
+            { "wakeup",wakeuph + ":" + wakeupm},
+            {"senddate",DateTime.Now.ToString("yyyy-MM-dd")}
+        };
+        HttpResponseMessage resp = await client.PostAsync("https://api.schnetworks.net/v1/vital-info.php", new FormUrlEncodedContent(vds)).ConfigureAwait(false);
+        string json = await resp.Content.ReadAsStringAsync();
+        AccountService.OtherAccountRoot? js_l = JsonConvert.DeserializeObject<AccountService.OtherAccountRoot>(json);
+        if(js_l != null)
+        {
+            if (js_l.RespInfo.Code == 200)
+            {
+                message = "<p class='alert alert-success'>データの送信に成功しました！</p>";
+                sw_form = "display: none";
+                backbutton = "";
+                //StateHasChanged();
+            }
+        }
+        await InvokeAsync(StateHasChanged);
     }
 }

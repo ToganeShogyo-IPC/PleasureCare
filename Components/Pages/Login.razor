@@ -36,14 +36,15 @@
             mail = mail,
             pass = password
         };
-        AccountService.LogAccRoot? log = AccountService.LoginAccount(aclb).Result;
+        AccountService.LogAccRoot? log = await AccountService.LoginAccount(aclb);
         if(log != null)
         {
             if(log.RespInfo.Code == 200)
             {
                 ShareValues.value = log.LogAccDataBody[0];
                 NavigationManager.NavigateTo("./");
-            }else if (log.RespInfo.Code == 404)
+            }
+            else if (log.RespInfo.Code == 404 || log.RespInfo.Code == 403)
             {
                 message = "<p class='alert alert-danger'>パスワードまたはメールアドレスが間違っています。</p>";
                 StateHasChanged();

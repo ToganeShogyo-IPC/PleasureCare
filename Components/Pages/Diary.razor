@@ -1,8 +1,16 @@
 ﻿@page "/Diary"
 <h3>Diary</h3>
 
-
-
+<div class="container mt-5">
+    <h1 class="mb-4">長文入力フォーム</h1>
+    <form>
+        <div class="form-group">
+            <label for="longTextInput">長文を入力してください:</label>
+            <textarea class="form-control" id="longTextInput" rows="10" placeholder="ここに長文を入力してください"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">送信</button>
+    </form>
+</div>
 
 @code {
 }

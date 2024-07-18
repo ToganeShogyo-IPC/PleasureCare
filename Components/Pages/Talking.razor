@@ -3,32 +3,29 @@
 <h1>問診</h1>
 
 <div class="row">
+    <h2 style = @switchDisp1>「次へ」をクリックすると、問診を開始します。</h2>
     @questionbody
     <div class="row mb-3">
         <div class="input-group">
-            <input type="text" class="form-control form-control-lg" \ placeholder="解答を入力してください" @bind="ans" />
+            <input style="@switchDisp" type="text" class="form-control form-control-lg" placeholder="解答を入力してください" @bind="ans"/>
         </div>
     </div>
-    <input type="button" class="btn btn-primary" value="つぎへ" @onclick="nextQues" />
+    <input type="button" class="btn btn-primary" value="つぎへ" @onclick="nextQues"/>
 </div>
 @code {
     private readonly HttpClient Client = new HttpClient();
     public MarkupString questionbody;
+    public MarkupString switchDisp = (MarkupString)"display: none";
+    public MarkupString switchDisp1;
     public List<ansResp> qAnswers = new List<ansResp>();
     questionsA questions = new questionsA();
     public string ans;
-    public string data;
-    public string te;
     public int nowans = 0;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        questionbody = (MarkupString)"<h2>「次へ」をクリックすると、問診を開始します。";
-        return;
-    }
 
     public async void nextQues()
     {
+        switchDisp1 = (MarkupString)"display: none";
+        switchDisp = (MarkupString)"";
         questionbody = questions.question[nowans].question;
         nowans += 1;
         await InvokeAsync(StateHasChanged);
@@ -36,10 +33,6 @@
 
     public async void getTest()
     {
-        te = "pushed";
-        var resp = await Client.GetStringAsync("https://api.schnetworks.net/v1/user.php");
-        data = resp;
-        StateHasChanged();
     }
     
     private async void postResult()

@@ -1,18 +1,19 @@
 ﻿@page "/talking"
 @using SmileCare.Data
+@inject NavigationManager NavigationManager
 <h1>問診</h1>
 
 <div class="row">
-    <h2 style=@switchDisp1 >「次へ」をクリックすると、問診を開始します。</h2>
+    <h2 style=@switchDisp1 >「次へ」をタップすると、問診を開始します。</h2>
     @questionbody
     <input style=@switchDisp2 type='button' class='btn btn-primary' @onclick=putbutton value='表示する'>
-    <h1 style=@switchDisp4>@afterviewStrings</h1>
+    <h1 style=@switchDisp4 >@afterviewStrings</h1>
     <div class="row mb-3">
         <div class="input-group">
             <input style=@switchDisp type="text" class="form-control form-control-lg" placeholder="解答を入力してください" @bind="ans"/>
         </div>
     </div>
-    <input type="button" class="btn btn-primary" value="つぎへ" @onclick="nextQues"/>
+    <input type="button" class="btn btn-primary" value="次へ" @onclick="nextQues"/>
 </div>
 @code {
     private readonly HttpClient Client = new HttpClient();
@@ -20,9 +21,9 @@
     public MarkupString afterviewStrings;
     public MarkupString switchDisp = (MarkupString)"display: none";
     public MarkupString switchDisp1;
-    public MarkupString switchDisp2 = (MarkupString)"display:none";
-    public MarkupString switchDisp3 = (MarkupString)"display:none";
-    public MarkupString switchDisp4 = (MarkupString)"display:none";
+    public MarkupString switchDisp2 = (MarkupString)"display: none";
+    public MarkupString switchDisp3 = (MarkupString)"display: none";
+    public MarkupString switchDisp4 = (MarkupString)"display: none";
     public List<ansResp> qAnswers = new List<ansResp>();
     private questionsA questions = new questionsA();
     public string ans;
@@ -30,14 +31,16 @@
 
     public async void putbutton()
     {
-        
+        switchDisp4 = (MarkupString)"";
+        await InvokeAsync(StateHasChanged);
     }
 
     public async void nextQues()
     {
-        if(questions.question.Count == nowans + 1)
+        if(questions.question.Count == nowans)
         {
-
+            NavigationManager.NavigateTo("./");
+            return;
         }
         switchDisp1 = (MarkupString)"display: none";
         switchDisp = (MarkupString)"";
@@ -45,6 +48,12 @@
         {
             switchDisp2 = (MarkupString)"";
             afterviewStrings = questions.question[nowans].afterviewStrings;
+        }
+        else
+        {
+            switchDisp2 = (MarkupString)"display: none";
+            switchDisp4 = (MarkupString)"display: none";
+            afterviewStrings = (MarkupString)"";
         }
         questionbody = questions.question[nowans].question;
         nowans += 1;

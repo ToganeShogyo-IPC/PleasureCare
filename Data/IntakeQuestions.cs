@@ -59,7 +59,7 @@ namespace SisuCare.Data
                 score = 3,
                 is_button = true,
                 afterviewStrings = (MarkupString)"682",
-                Trueanswers = new List<string>(){ "286" }
+                Trueanswers = new List<string>(){ "2","8","6" }
             } },
             {new IntakeQuestions(){
                 question = (MarkupString)"<h2>3の設問の単語を3つ思い出してもう一度読み上げてください。</h2>",

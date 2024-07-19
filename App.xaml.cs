@@ -1,4 +1,4 @@
-﻿namespace SmileCare;
+﻿namespace SisuCare;
 
 public partial class App : Application
 {

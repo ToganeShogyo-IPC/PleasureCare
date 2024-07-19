@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using SmileCare.Data;
+using SisuCare.Data;
 
-namespace SmileCare;
+namespace SisuCare;
 
 public static class MauiProgram
 {

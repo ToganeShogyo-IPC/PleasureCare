@@ -4,7 +4,7 @@
 <h1>問診</h1>
 
 <div class="row">
-    <h2 style=@switchDisp1 >「次へ」をタップすると、問診を開始します。</h2>
+    <h2 style=@switchDisp1 >@mongon</h2>
     @questionbody
     <input style=@switchDisp2 type='button' class='btn btn-primary' @onclick=putbutton value='表示する'>
     <h1 style=@switchDisp4 >@afterviewStrings</h1>
@@ -14,10 +14,16 @@
         </div>
     </div>
     <input type="button" class="btn btn-primary" value="次へ" @onclick="nextQues"/>
+    @mong2
 </div>
 @code {
+    [CascadingParameter]
+    private ShareValues? ShareValues { get; set; }
+
     private readonly HttpClient Client = new HttpClient();
     public MarkupString questionbody;
+    public string mongon = "「次へ」をタップすると、問診を開始します。";
+    public string mong2 = "";
     public MarkupString afterviewStrings;
     public MarkupString switchDisp = (MarkupString)"display: none";
     public MarkupString switchDisp1;
@@ -28,6 +34,7 @@
     private questionsA questions = new questionsA();
     public string ans;
     public int nowans = 0;
+    public int TotalScore = 0;
 
     public async void putbutton()
     {
@@ -35,13 +42,51 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    public async void nextQues()
+    public void AnsChecker(bool iscont)
     {
-        if(questions.question.Count == nowans)
+        if(nowans == 0)
         {
-            NavigationManager.NavigateTo("./");
+            ans = "";
             return;
         }
+        else if(nowans >= 1)
+        {
+            int inscore = 0;
+            foreach (string value in questions.question[nowans-1].Trueanswers)
+            {
+                if (ans.Contains(value))
+                {
+                    TotalScore += 1;
+                    inscore += 1;
+                }
+                else if(iscont)
+                {
+                    nowans = nowans +( 6 - nowans);
+                }
+            }
+            qAnswers.Add(new ansResp()
+            {
+                qNum = nowans,
+                score = inscore
+            });
+            ans = "";
+        }
+    }
+
+    public async void nextQues()
+    {
+        if(questions.question.Count+1 == nowans) { NavigationManager.NavigateTo("./"); return; }
+        if(questions.question.Count == nowans)
+        {
+            postResult();
+            switchDisp = (MarkupString)"display: none";
+            questionbody = (MarkupString)"<h2>問診が完了しました。<h2><h3>「次へ」をクリックするとホームに戻ります。";
+            mong2 = "送信に成功しました。";
+            await InvokeAsync(StateHasChanged);
+            nowans += 1;
+            return;
+        }
+        AnsChecker(questions.question[nowans].is_continue);
         switchDisp1 = (MarkupString)"display: none";
         switchDisp = (MarkupString)"";
         if (questions.question[nowans].is_button)
@@ -62,12 +107,26 @@
 
     public async void getTest()
     {
-        
+
     }
 
     private async void postResult()
     {
-        //postする処理をなんか書く
+        Dictionary<string, string> requestbodies = new Dictionary<string, string>()
+        {
+            {"uuid", ShareValues.value.uuid},
+            {"intakedate", DateTime.Now.ToString("yyyy-MM-dd")},
+            {"ansbody", JsonConvert.SerializeObject(qAnswers)},
+            {"total", TotalScore.ToString()}
+        };
+        HttpContent reqBody = new FormUrlEncodedContent(requestbodies);
+        HttpResponseMessage resp = await Client.PostAsync("https://api.schnetworks.net/v1/intake-res.php", reqBody).ConfigureAwait(false);
+        string json = await resp.Content.ReadAsStringAsync();
+        var js_l = JsonConvert.DeserializeObject<AccountService.OtherAccountRoot>(json);
+        if (js_l.RespInfo.Code < 300 && js_l.RespInfo.Code >= 200)
+        {
+            return;
+        }
     }
 
     public class ansResp

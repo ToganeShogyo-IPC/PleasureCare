@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace SmileCare;
+namespace SisuCare;
 
 [Application]
 public class MainApplication : MauiApplication

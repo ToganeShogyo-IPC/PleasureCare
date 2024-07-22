@@ -1,13 +1,68 @@
 ﻿@page "/analyze"
+@using ChartJs.Blazor.ChartJS.Common.Axes.Ticks
+@using ChartJs.Blazor.ChartJS.RadarChart
+@using ChartJs.Blazor.Charts
 <h1>分析</h1>
-
-<h4>あるデータ</h4>
+<!-----
 <p>年齢、身長、体重、起床時間、就寝時間、睡眠時間、日付,食べた食事(栄養素)</p>
-<h4>結果</h4>
 <p>BMI,体脂肪量,体脂肪率,睡眠時間の推移,不足している栄養素</p>
-
-
+----->
+<h4>睡眠分析</h4>
+<div class="row">
+    <div class="col-8">
+        <ChartJsRadarChart @ref="_radarChart" Config="@_config" Width="100" Height="100"/>
+        </div>
+</div>
 
 @code {
+    private RadarConfig _config;
+    private ChartJsRadarChart _radarChart;
     
+    protected override void OnInitialized()
+    {
+        _config = new RadarConfig
+        {
+            Options = new RadarOptions
+            {
+                Scale = new Scale
+                {
+                    Ticks = new LinearCartesianTicks
+                    {
+                        BeginAtZero = true
+                    }
+                }
+            }
+        };
+
+        _config.Data.Labels.AddRange(new[] { "パンパパン", "硫化水素(劇物)", "朝はパン","ヤルキナーゼ", "グル↑コ↓サ↑ミン", "アドレナリン", "鉄分" });
+
+        var dataset = new RadarDataset
+        {
+            Label = "My First dataset",
+            BackgroundColor = "rgba(255,99,132,0.2)",
+            BorderColor = "rgba(255,99,132,1)",
+            PointBackgroundColor = "rgba(255,99,132,1)",
+            PointBorderColor = "#fff",
+            PointHoverBackgroundColor = "#fff",
+            PointHoverBorderColor = "rgba(255,99,132,1)",
+            LineTension = 0,
+            Data = new List<double> { 65, 59, 70, 45, 56, 99, 5 }
+        };
+        var dataset2 = new RadarDataset
+        {
+            Label = "My Second dataset",
+            BackgroundColor = "rgba(54,162,235,0.2)",
+            BorderColor = "rgba(54,162,235,1)",
+            PointBackgroundColor = "rgba(54,162,235,1)",
+            PointBorderColor = "#fff",
+            PointHoverBackgroundColor = "#fff",
+            PointHoverBorderColor = "rgba(54,162,235,1)",
+            LineTension = 0,
+            Data = new List<double> { 10, 20, 30, 40, 50, 60, 70 }
+        };
+        
+        _config.Data.Datasets.Add(dataset);
+        _config.Data.Datasets.Add(dataset2);
+    }
+
 }

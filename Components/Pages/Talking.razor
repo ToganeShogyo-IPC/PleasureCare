@@ -67,7 +67,8 @@
             qAnswers.Add(new ansResp()
             {
                 qNum = nowans,
-                score = inscore
+                score = inscore,
+                rawans = ans
             });
             ans = "";
         }
@@ -78,6 +79,7 @@
         if(questions.question.Count+1 == nowans) { NavigationManager.NavigateTo("./"); return; }
         if(questions.question.Count == nowans)
         {
+            AnsChecker(questions.question[nowans-1].is_continue);
             postResult();
             switchDisp = (MarkupString)"display: none";
             questionbody = (MarkupString)"<h2>問診が完了しました。<h2><h3>「次へ」をクリックするとホームに戻ります。";
@@ -133,5 +135,6 @@
     {
         public int qNum { get; set; }
         public int score { get; set; }
+        public string? rawans { get; set; }
     }
 }

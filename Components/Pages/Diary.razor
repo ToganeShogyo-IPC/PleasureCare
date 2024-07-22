@@ -1,16 +1,18 @@
 ﻿@page "/Diary"
-<h3>Diary</h3>
+<h3>日記</h3>
 
 <div class="container mt-5">
-    <h1 class="mb-4">長文入力フォーム</h1>
+    <h2>@nanika</h2>
+    <!---<h1 class="mb-4">長文入力フォーム</h1>-->
     <form>
         <div class="form-group">
-            <label for="longTextInput">長文を入力してください:</label>
-            <textarea class="form-control" id="longTextInput" rows="10" placeholder="ここに長文を入力してください"></textarea>
+            <!----<label for="longTextInput">長文を入力してください:</label> ----->
+            <textarea class="form-control" id="longTextInput" rows="10" placeholder="ここに日記を入力してください"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">送信</button>
     </form>
 </div>
 
 @code {
+    public string nanika = DateTime.Now.ToString("M月dd日の日記");
 }

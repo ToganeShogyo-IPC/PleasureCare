@@ -59,12 +59,26 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="Resources\Images\analyze.png" />
+      <None Remove="Resources\Images\diary.png" />
+      <None Remove="Resources\Images\intake.png" />
+      <None Remove="Resources\Images\vital.png" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="ChartJs.Blazor" Version="1.1.0" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiImage Include="wwwroot\Images\analyze.png" />
+      <MauiImage Include="wwwroot\Images\diary.png" />
+      <MauiImage Include="wwwroot\Images\intake.png" />
+      <MauiImage Include="wwwroot\Images\vital.png" />
     </ItemGroup>
 
 </Project>

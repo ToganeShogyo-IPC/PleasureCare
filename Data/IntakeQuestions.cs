@@ -32,7 +32,7 @@ namespace SisuCare.Data
             {
                 new IntakeQuestions()
                 {
-                    question = (MarkupString)"<h2>今日は何月何日、何曜日ですか？</h2>",
+                    question = (MarkupString)"<h2>今日は何月、何日、何曜日ですか？</h2>",
                     score = 3,
                     Trueanswers = new List<string>()
                         { DateTime.Now.ToString("M月"), DateTime.Now.ToString("dd日"), DateTime.Now.ToString("dddd") }
@@ -41,17 +41,17 @@ namespace SisuCare.Data
             {
                 new IntakeQuestions()
                 {
-                    question = (MarkupString)"<h2>これから表示する三つの言葉を読み上げてください。<h2><h3>後の設問でもう一度聞きますので、覚えてください。</h3>",
+                    question = (MarkupString)"<h2>これから表示する言葉を読み上げてください。<h2><h3>後の設問でもう一度聞きますので、覚えてください。</h3>",
                     score = 3,
                     is_button = true,
-                    afterviewStrings = (MarkupString)"桜　猫　電車",
-                    Trueanswers = new List<string>() { "桜", "猫", "電車", "さくら", "ねこ", "でんしゃ", "サクラ", "ネコ", "デンシャ" }
+                    afterviewStrings = (MarkupString)"電卓　マウス　とっちー",
+                    Trueanswers = new List<string>() { "電卓", "マウス", "とっちー", "でんたく", "まうす", "デンタク", "トッチー", "栃" }
                 }
             },
             {
                 new IntakeQuestions()
                 {
-                    question = (MarkupString)"<h2>100から7を引くといくつになりますか？</h2>",
+                    question = (MarkupString)"<h2>100-7はいくつですか？</h2>",
                     score = 1,
                     Trueanswers = new List<string>() { "93" }
                 }
@@ -59,7 +59,7 @@ namespace SisuCare.Data
             {
                 new IntakeQuestions()
                 {
-                    question = (MarkupString)"<h2>93から7を引くといくつになりますか？</h2>",
+                    question = (MarkupString)"<h2>93-7はいくつですか？</h2>",
                     score = 1,
                     is_continue = true,
                     Trueanswers = new List<string>() { "86" }
@@ -68,7 +68,7 @@ namespace SisuCare.Data
             {
                 new IntakeQuestions()
                 {
-                    question = (MarkupString)"<h2>86から7を引くといくつになりますか？</h2>",
+                    question = (MarkupString)"<h2>86-7はいくつですか？</h2>",
                     score = 1,
                     is_continue = true,
                     Trueanswers = new List<string>() { "79" }
@@ -77,7 +77,7 @@ namespace SisuCare.Data
             {
                 new IntakeQuestions()
                 {
-                    question = (MarkupString)"<h2>これから表示する三つの数字を逆から読み上げてください。<h2>",
+                    question = (MarkupString)"<h2>これから表示する数字を逆から読み上げてください。<h2>",
                     score = 3,
                     is_button = true,
                     afterviewStrings = (MarkupString)"682",
@@ -87,15 +87,15 @@ namespace SisuCare.Data
             {
                 new IntakeQuestions()
                 {
-                    question = (MarkupString)"<h2>設問3の単語を3つ思い出してもう一度読み上げてください。</h2>",
-                    score = 1,
+                    question = (MarkupString)"<h2>設問3の単語を3つ思い出して読み上げてください。</h2>",
+                    score = 3,
                     Trueanswers = new List<string>() { "桜", "猫", "電車" }
                 }
             },
             {
                 new IntakeQuestions()
                 {
-                    question = (MarkupString)"<h2>知っている野菜をできるだけ多く読み上げてください。</h2>",
+                    question = (MarkupString)"<h2>野菜の名前をできるだけ多く読み上げてください。</h2>",
                     score = 5,
                     Trueanswers = new List<string>() { "Variable" }
                 }

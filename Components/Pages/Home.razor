@@ -5,7 +5,7 @@
     [CascadingParameter]
     private ShareValues? ShareValues { get; set; }
     string debugtext;
-    string logoutcore;
+    string logoutcore = "display: none";
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -15,6 +15,7 @@
             {
                 if (setting==null)
                 {
+                    logoutcore = "display: none";
                     NavigationManager.NavigateTo("./Login");
                 }
                 else if (setting.authid != null)
@@ -24,12 +25,13 @@
                         AccountService.LogAccRoot acc = await AccountService.LoginAccount(is_startup: true);
                         ShareValues.value = acc.LogAccDataBody[0];
                         debugtext = ShareValues.value.name;
-                        logoutcore = "<div class='row mb-2'><div class='col-sm-12'><div class='card'><div class='card-body'><a href='Accounts' class='link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover'><h2 class='card-title'>アカウント設定  <i style='font-size: 1.3rem' class='bi bi-chevron-right'></i></h2></a><p class='card-description'>アカウントに関する設定を行います。</p></div></div></div></div>";
+                        logoutcore = "";
                         StateHasChanged();
                     }
                     catch
                     {
                         AccountService.LogoutAccount(is_local:true);
+                        logoutcore = "display: none";
                         NavigationManager.NavigateTo("./Login");
                     }
                     
@@ -48,43 +50,92 @@
 <div class="container">
     <div class="row mb-2">
         <div class="col-sm-12">
-            <div class="card">
-                <div class="card-body">
-                    <a href="Diary" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"><h2 class="card-title">日記  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2></a>
-                    <p class="card-description">今日の出来事を共有できる。</p>
+            <div class="card mb-3 m-0 p-0" style="height: 120px; overflow: hidden;">
+                <div class="row g-0" style="height: 100%;">
+                    <div class="col-4 col-md-4 d-flex justify-content-center align-items-center mb-1 mt-1" style="height: 95%;">
+                        <img src="images/diary.png" class="img-fluid rounded-start m-0 p-0" style="max-width: 100%; height: 100%; object-fit: scale-down;" />
+                    </div>
+                    <div class="col-8 col-md-8 d-flex align-items-center" style="height: 100%;">
+                        <div class="m-0 p-2">
+                            <a href="Diary" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                                <h2 class="card-title m-0 p-0">日記  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-12">
-            <div class="card">
-                <div class="card-body">
-                    <a href="Vital" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"><h2 class="card-title">健康観察  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2></a>
-                    <p class="card-description">本日の健康・生活状況の記録</p>
+            <div class="card mb-3 m-0 p-0" style="height: 120px; overflow: hidden;">
+                <div class="row g-0" style="height: 100%;">
+                    <div class="col-4 col-md-4 d-flex justify-content-center align-items-center mb-1 mt-1" style="height: 95%;">
+                        <img src="images/vital.png" class="img-fluid rounded-start m-0 p-0" style="max-width: 100%; height: 100%; object-fit: scale-down;" />
+                    </div>
+                    <div class="col-8 col-md-8 d-flex align-items-center" style="height: 100%;">
+                        <div class="m-0 p-2">
+                            <a href="Vital" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                                <h2 class="card-title m-0 p-0">健康観察  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-12">
-            <div class="card">
-                <div class="card-body">
-                    <a href="Talking" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"><h2 class="card-title">東商式スケール  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2></a>
-                    <p class="card-description">現在の認知力状況などを記録します。</p>
+            <div class="card mb-3 m-0 p-0" style="height: 120px; overflow: hidden;">
+                <div class="row g-0" style="height: 100%;">
+                    <div class="col-4 col-md-4 d-flex justify-content-center align-items-center mb-1 mt-1" style="height: 95%;">
+                        <img src="images/intake.png" class="img-fluid rounded-start m-0 p-0" style="max-width: 100%; height: 100%; object-fit: scale-down;" />
+                    </div>
+                    <div class="col-8 col-md-8 d-flex align-items-center" style="height: 100%;">
+                        <div class="m-0 p-2">
+                            <a href="Taking" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                                <h2 class="card-title m-0 p-0">東商式スケール  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-12">
-            <div class="card">
-                <div class="card-body">
-                    <a href="Analyze" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"><h2 class="card-title">分析  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2></a>
-                    <p class="card-description">記録されたデータからグラフや状態を分析します。</p>
+            <div class="card mb-3 m-0 p-0" style="height: 120px; overflow: hidden;">
+                <div class="row g-0" style="height: 100%;">
+                    <div class="col-4 col-md-4 d-flex justify-content-center align-items-center mb-1 mt-1" style="height: 95%;">
+                        <img src="images/analyze.png" class="img-fluid rounded-start m-0 p-0" style="max-width: 100%; height: 100%; object-fit: scale-down;" />
+                    </div>
+                    <div class="col-8 col-md-8 d-flex align-items-center" style="height: 100%;">
+                        <div class="m-0 p-2">
+                            <a href="Analyze" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                                <h2 class="card-title m-0 p-0">分析  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    @((MarkupString)logoutcore)
+    <div class="row mb-2" style="@((MarkupString)logoutcore)">
+        <div class="col-sm-12">
+            <div class="card mb-3 m-0 p-0" style="height: 120px; overflow: hidden;">
+                <div class="row g-0" style="height: 100%;">
+                    <div class="col-4 col-md-4 d-flex justify-content-center align-items-center mb-1 mt-1" style="height: 95%;">
+                        <img src="images/uset.png" class="img-fluid rounded-start m-0 p-0" style="max-width: 100%; height: 100%; object-fit: scale-down;" />
+                    </div>
+                    <div class="col-8 col-md-8 d-flex align-items-center" style="height: 100%;">
+                        <div class="m-0 p-2">
+                            <a href="Accounts" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                                <h2 class="card-title m-0 p-0">アカウント設定  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -78,8 +78,12 @@
 </div>
 @((MarkupString)message)
 
-<a href="/" style="@((MarkupString)backbutton)" class="btn btn-primary" >ホームに戻る</a>
-<input style="@((MarkupString)sw_form)" type="button" class="btn btn-primary " value="送信" @onclick="ResultSender" />
+<a href="/" style="@((MarkupString)backbutton); background-color: #005d64" class="btn btn-primary" >ホームに戻る</a>
+<div class="row mt-5">
+    <div class="d-flex justify-content-end">
+        <input style="@((MarkupString)sw_form); background-color: #005d64" type="button" class="btn link-light col-4 " value="送信" @onclick="ResultSender"/>
+    </div>
+</div>
 <!-----
     サイズ調整
 ----->

@@ -53,27 +53,12 @@
 
         <!-- Images -->
         <MauiImage Include="Resources\Images\*" />
-        <MauiImage Update="Resources\Images\acsusets.png">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </MauiImage>
-        <MauiImage Update="Resources\Images\analyze.png">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </MauiImage>
-        <MauiImage Update="Resources\Images\diary.png">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </MauiImage>
         <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </MauiImage>
-        <MauiImage Update="Resources\Images\intake.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </MauiImage>
         <MauiImage Update="Resources\Images\uset.png">
           <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
           <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </MauiImage>
-        <MauiImage Update="Resources\Images\vital.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </MauiImage>
 
@@ -102,7 +87,25 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\Images\" />
+      <MauiImage Include="wwwroot\Images\acsusets.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </MauiImage>
+      <MauiImage Include="wwwroot\Images\analyze.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </MauiImage>
+      <MauiImage Include="wwwroot\Images\diary.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </MauiImage>
+      <MauiImage Include="wwwroot\Images\intake.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </MauiImage>
+      <MauiImage Include="wwwroot\Images\vital.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </MauiImage>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\Images\acsusets.png" />
     </ItemGroup>
 
 </Project>

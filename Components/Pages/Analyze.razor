@@ -2,18 +2,18 @@
 @using ChartJs.Blazor.ChartJS.Common.Axes.Ticks
 @using ChartJs.Blazor.ChartJS.RadarChart
 @using ChartJs.Blazor.Charts
-<!-----
-<p>年齢、身長、体重、起床時間、就寝時間、睡眠時間、日付,食べた食事(栄養素)</p>
-<p>BMI,体脂肪量,体脂肪率,睡眠時間の推移,不足している栄養素</p>
------>
+
 <h4>睡眠分析</h4>
 <div class="row">
-    <div class="col-8">
+    <div class="col-12">
         <ChartJsRadarChart @ref="_radarChart" Config="@_config" Width="100" Height="100"/>
         </div>
 </div>
 
+
+
 @code {
+    
     private RadarConfig _config;
     private ChartJsRadarChart _radarChart;
     
@@ -33,11 +33,13 @@
             }
         };
 
-        _config.Data.Labels.AddRange(new[] { "パンパパン", "硫化水素(劇物)", "朝はパン","ヤルキナーゼ", "グル↑コ↓サ↑ミン", "アドレナリン", "鉄分" });
-
+        _config.Data.Labels.AddRange(new[] { "タンパク質(g)", "ビタミンB6(mg)", "ビタミンB12(mg)","鉄分(mg)", "食物繊維(g)", "亜鉛(mg)", "カルシウム(mg)" });
+        <!-----
+        60g, 1.4mg, 2.4mg, 7mg, 20g, 10mg, 700mg 
+        ----->
         var dataset = new RadarDataset
         {
-            Label = "My First dataset",
+            Label = "推定必要摂取量(75歳以上男性)",
             BackgroundColor = "rgba(255,99,132,0.2)",
             BorderColor = "rgba(255,99,132,1)",
             PointBackgroundColor = "rgba(255,99,132,1)",
@@ -45,7 +47,7 @@
             PointHoverBackgroundColor = "#fff",
             PointHoverBorderColor = "rgba(255,99,132,1)",
             LineTension = 0,
-            Data = new List<double> { 65, 59, 70, 45, 56, 99, 5 }
+            Data = new List<double> { 60, 1.4, 2.4, 7, 20, 10, 700 }
         };
         var dataset2 = new RadarDataset
         {

@@ -49,7 +49,24 @@
 
         <!-- Images -->
         <MauiImage Include="Resources\Images\*" />
+        <MauiImage Update="Resources\Images\analyze.png">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </MauiImage>
+        <MauiImage Update="Resources\Images\diary.png">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </MauiImage>
         <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
+        <MauiImage Update="Resources\Images\intake.png">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </MauiImage>
+        <MauiImage Update="Resources\Images\uset.png">
+          <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+          <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </MauiImage>
+        <MauiImage Update="Resources\Images\vital.png">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </MauiImage>
 
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*" />
@@ -59,22 +76,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <MauiImage Remove="Resources\Images\uset.png" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="Resources\Images\analyze.png" />
       <None Remove="Resources\Images\diary.png" />
       <None Remove="Resources\Images\intake.png" />
       <None Remove="Resources\Images\uset.png" />
       <None Remove="Resources\Images\vital.png" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="Resources\Images\uset.png">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
     </ItemGroup>
 
     <ItemGroup>

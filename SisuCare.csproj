@@ -59,10 +59,22 @@
     </ItemGroup>
 
     <ItemGroup>
+      <MauiImage Remove="Resources\Images\uset.png" />
+    </ItemGroup>
+
+    <ItemGroup>
       <None Remove="Resources\Images\analyze.png" />
       <None Remove="Resources\Images\diary.png" />
       <None Remove="Resources\Images\intake.png" />
+      <None Remove="Resources\Images\uset.png" />
       <None Remove="Resources\Images\vital.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Resources\Images\uset.png">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
@@ -75,10 +87,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <MauiImage Include="wwwroot\Images\analyze.png" />
-      <MauiImage Include="wwwroot\Images\diary.png" />
-      <MauiImage Include="wwwroot\Images\intake.png" />
-      <MauiImage Include="wwwroot\Images\vital.png" />
+      <Folder Include="wwwroot\Images\" />
     </ItemGroup>
 
 </Project>

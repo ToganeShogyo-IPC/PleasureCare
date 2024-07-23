@@ -1,7 +1,7 @@
 ﻿@page "/talking"
 @using SisuCare.Data
 @inject NavigationManager NavigationManager
-<h1>問診</h1>
+<h1>@topMsg</h1>
 
 <div class="row">
     <h2 style=@switchDisp1 >@mongon</h2>
@@ -32,6 +32,7 @@
     public MarkupString switchDisp4 = (MarkupString)"display: none";
     public List<ansResp> qAnswers = new List<ansResp>();
     private questionsA questions = new questionsA();
+    public string topMsg = "東商式スケール";
     public string ans;
     public int nowans = 0;
     public int TotalScore = 0;
@@ -76,9 +77,11 @@
 
     public async void nextQues()
     {
+        topMsg = $"設問{nowans+1}";
         if(questions.question.Count+1 == nowans) { NavigationManager.NavigateTo("./"); return; }
         if(questions.question.Count == nowans)
         {
+            topMsg = $"";
             AnsChecker(questions.question[nowans-1].is_continue);
             postResult();
             switchDisp = (MarkupString)"display: none";
@@ -105,11 +108,6 @@
         questionbody = questions.question[nowans].question;
         nowans += 1;
         await InvokeAsync(StateHasChanged);
-    }
-
-    public async void getTest()
-    {
-
     }
 
     private async void postResult()

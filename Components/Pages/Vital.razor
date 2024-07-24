@@ -9,79 +9,79 @@
 <!-----
     頻度低い
 ----->
-<div style = "@((MarkupString)sw_form)">
-<p>体重</p>
-<div class="row mb-3">
-    <div class="input-group">
-        <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重" @bind="weight"/>
-        <label class="input-group-text">Kg</label>
+<div style="@((MarkupString)sw_form)">
+    <p>体重</p>
+    <div class="row mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重" @bind="weight" />
+            <label class="input-group-text">Kg</label>
+        </div>
     </div>
-</div>
 
-<!-----
-    毎朝記録するやつ
------>
-<p>就寝時間</p>
-<div class="row mb-3">
-    <div class="input-group">
-        <select class="form-control form-control-lg" id="syuusinHour" @bind="gotobedh">
-            <option value="" disabled selected>時</option>
-            @for (int i = 0; i < 24; i++)
-            {
-                <option value="@i.ToString("00")">@i</option>
-            }
-        </select>
-        <label class="input-group-text">時</label>
-        <select class="form-control form-control-lg" id="syuusinMinute" @bind="gotobedm">
-            <option value="" disabled selected>分</option>
-            @for (int i = 0; i < 60; i += 5)
-            {
-                <option value="@i.ToString("00")">@i.ToString("00")</option>
-            }
-        </select>
-        <label class="input-group-text">分</label>
+    <!-----
+        毎朝記録するやつ
+    ----->
+    <p>就寝時間</p>
+    <div class="row mb-3">
+        <div class="input-group">
+            <select class="form-control form-control-lg" id="syuusinHour" @bind="gotobedh">
+                <option value="" disabled selected>時</option>
+                @for (int i = 0; i < 24; i++)
+                {
+                    <option value="@i.ToString("00")">@i</option>
+                }
+            </select>
+            <label class="input-group-text">時</label>
+            <select class="form-control form-control-lg" id="syuusinMinute" @bind="gotobedm">
+                <option value="" disabled selected>分</option>
+                @for (int i = 0; i < 60; i += 5)
+                {
+                    <option value="@i.ToString("00")">@i.ToString("00")</option>
+                }
+            </select>
+            <label class="input-group-text">分</label>
+        </div>
     </div>
-</div>
 
-<p>起床時間</p>
-<div class="row mb-3">
-    <div class="input-group">
-        <select class="form-control form-control-lg" id="kisyouHour" @bind="wakeuph" >
-            <option value="" disabled selected>時</option>
-            @for (int i = 0; i < 24; i++)
-            {
-                <option value="@i.ToString("00")">@i</option>
-            }
-        </select>
-        <label class="input-group-text">時</label>
-        <select class="form-control form-control-lg" id="kisyouMinute" @bind="wakeupm">
-            <option value="" disabled selected>分</option>
-            @for (int i = 0; i < 60; i += 5)
-            {
-                <option value="@i.ToString("00")">@i.ToString("00")</option>
-            }
-        </select>
-        <label class="input-group-text">分</label>
+    <p>起床時間</p>
+    <div class="row mb-3">
+        <div class="input-group">
+            <select class="form-control form-control-lg" id="kisyouHour" @bind="wakeuph">
+                <option value="" disabled selected>時</option>
+                @for (int i = 0; i < 24; i++)
+                {
+                    <option value="@i.ToString("00")">@i</option>
+                }
+            </select>
+            <label class="input-group-text">時</label>
+            <select class="form-control form-control-lg" id="kisyouMinute" @bind="wakeupm">
+                <option value="" disabled selected>分</option>
+                @for (int i = 0; i < 60; i += 5)
+                {
+                    <option value="@i.ToString("00")">@i.ToString("00")</option>
+                }
+            </select>
+            <label class="input-group-text">分</label>
+        </div>
     </div>
-</div>
 
-<!-----
-    毎晩記録するやつ
------>
-<p>歩数</p>
-<div class="row mb-3">
-    <div class="input-group">
-        <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="歩数" @bind="steps" />
-        <label class="input-group-text">歩</label>
+    <!-----
+        毎晩記録するやつ
+    ----->
+    <p>歩数</p>
+    <div class="row mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="歩数" @bind="steps" />
+            <label class="input-group-text">歩</label>
+        </div>
     </div>
-</div>
 </div>
 @((MarkupString)message)
 
-<a href="/" style="@((MarkupString)backbutton); background-color: #005d64" class="btn btn-primary" >ホームに戻る</a>
+<a href="/" style="@((MarkupString)backbutton); background-color: #005d64" class="btn btn-primary">ホームに戻る</a>
 <div class="row mt-5">
     <div class="d-flex justify-content-end">
-        <input style="@((MarkupString)sw_form); background-color: #005d64" type="button" class="btn link-light col-4 " value="送信" @onclick="ResultSender"/>
+        <input style="@((MarkupString)sw_form); background-color: #005d64" type="button" class="btn link-light col-4 " value="送信" @onclick="ResultSender" />
     </div>
 </div>
 <!-----
@@ -123,7 +123,7 @@
         HttpResponseMessage resp = await client.PostAsync("https://api.schnetworks.net/v1/vital-info.php", new FormUrlEncodedContent(vds)).ConfigureAwait(false);
         string json = await resp.Content.ReadAsStringAsync();
         AccountService.OtherAccountRoot? js_l = JsonConvert.DeserializeObject<AccountService.OtherAccountRoot>(json);
-        if(js_l != null)
+        if (js_l != null)
         {
             if (js_l.RespInfo.Code == 200)
             {

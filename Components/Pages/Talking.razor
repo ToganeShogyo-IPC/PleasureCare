@@ -4,16 +4,25 @@
 <h1>@topMsg</h1>
 
 <div class="row">
-    <h2 style=@switchDisp1 >@mongon</h2>
+    <h2 style=@switchDisp1>@mongon</h2>
     @questionbody
+</div>
+<div class="row mb-1">
+    <div class="col-1">
+        <button class="btn link-light" style="@switchDisp; background-color: #005d64;" @onclick=SpeakText><i class="bi bi-megaphone"></i></button>
+    </div>
+</div>
+<div class="row">
     <input style="@switchDisp2; background-color: #005d64;" type='button' class='btn link-light' @onclick=putbutton value='表示する'>
-    <h1 style=@switchDisp4 >@afterviewStrings</h1>
+    <h1 style=@switchDisp4>@afterviewStrings</h1>
     <div class="row mb-3">
         <div class="input-group">
-            <input style=@switchDisp type="text" class="form-control form-control-lg" placeholder="解答を入力してください" @bind="ans"/>
+            <input style=@switchDisp type="text" class="form-control form-control-lg" placeholder="解答を入力してください" @bind="ans" />
         </div>
     </div>
-    <input type="button" class="btn link-light" style="background-color: #005d64" value="次へ" @onclick="nextQues"/>
+</div>
+<div class="row">
+    <input type="button" class="btn link-light" style="background-color: #005d64" value="次へ" @onclick="nextQues" />
     @mong2
 </div>
 @code {
@@ -37,6 +46,9 @@
     public int nowans = 0;
     public int TotalScore = 0;
 
+    public async void SpeakText() =>
+        await TextToSpeech.Default.SpeakAsync(questions.question[nowans].voicealt);
+
     public async void putbutton()
     {
         switchDisp4 = (MarkupString)"";
@@ -45,44 +57,44 @@
 
     public void AnsChecker(bool iscont)
     {
-        if(nowans == 0)
+        if (nowans == 0)
         {
             ans = "";
             return;
         }
-        else if(nowans >= 1)
+        else if (nowans >= 1)
         {
             int inscore = 0;
-            foreach (string value in questions.question[nowans-1].Trueanswers)
+            foreach (string value in questions.question[nowans - 1].Trueanswers)
             {
                 if (ans.Contains(value))
                 {
                     TotalScore += 1;
                     inscore += 1;
                 }
-                else if(iscont)
+                else if (iscont)
                 {
-                    nowans = nowans +( 6 - nowans);
+                    nowans = nowans + (6 - nowans);
                 }
             }
             qAnswers.Add(new ansResp()
-            {
-                qNum = nowans,
-                score = inscore,
-                rawans = ans
-            });
+                {
+                    qNum = nowans,
+                    score = inscore,
+                    rawans = ans
+                });
             ans = "";
         }
     }
 
     public async void nextQues()
     {
-        topMsg = $"設問{nowans+1}";
-        if(questions.question.Count+1 == nowans) { NavigationManager.NavigateTo("./"); return; }
-        if(questions.question.Count == nowans)
+        topMsg = $"設問{nowans + 1}";
+        if (questions.question.Count + 1 == nowans) { NavigationManager.NavigateTo("./"); return; }
+        if (questions.question.Count == nowans)
         {
             topMsg = $"";
-            AnsChecker(questions.question[nowans-1].is_continue);
+            AnsChecker(questions.question[nowans - 1].is_continue);
             postResult();
             switchDisp = (MarkupString)"display: none";
             questionbody = (MarkupString)"<h2>問診が完了しました。<h2><h3>「次へ」をクリックするとホームに戻ります。";

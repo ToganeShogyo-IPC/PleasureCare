@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="SisuCare.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="lib/Chartjs/Chart.css">
-    
+
 </head>
 
 <body>
@@ -29,11 +29,7 @@
     <script src="_framework/blazor.webview.js" autostart="false"></script>
     <script src="lib/Chartjs/Chart.min.js"></script>
     <script>
-        function renderChart(chartJson,renderCanvas) {
-            //if (window.chartObj) {
-            //    console.log('destroy chartObj');
-            //    window.chartObj.destroy();
-            //}
+        function renderChart(chartJson, renderCanvas) {
             console.log("json=" + chartJson);
             var ctx = document.getElementById(renderCanvas);
             window.chartObj = new Chart(ctx, JSON.parse(chartJson));

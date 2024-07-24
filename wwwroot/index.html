@@ -10,10 +10,8 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="SisuCare.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <script src="_content/ChartJs.Blazor/moment-with-locales.min.js" type="text/javascript" language="javascript"></script>
-    <script src="_content/ChartJs.Blazor/Chart.min.js" type="text/javascript" language="javascript"></script>
-    <script src="_content/ChartJs.Blazor/ChartJsBlazorInterop.js" type="text/javascript" language="javascript"></script>
-    <link rel="stylesheet" href="_content/ChartJs.Blazor/ChartJSBlazor.css" />
+    <link rel="stylesheet" href="lib/Chartjs/Chart.css">
+    
 </head>
 
 <body>
@@ -29,6 +27,18 @@
     </div>
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
+    <script src="lib/Chartjs/Chart.min.js"></script>
+    <script>
+        function renderChart(chartJson) {
+            if (window.chartObj) {
+                console.log('destroy chartObj');
+                window.chartObj.destroy();
+            }
+            console.log("json=" + chartJson);
+            var ctx = document.getElementById('myChart');
+            window.chartObj = new Chart(ctx, JSON.parse(chartJson));
+        };
+    </script>
 
 </body>
 

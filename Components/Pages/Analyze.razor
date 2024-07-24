@@ -1,69 +1,72 @@
 ﻿@page "/analyze"
-@using ChartJs.Blazor.ChartJS.Common.Axes.Ticks
-@using ChartJs.Blazor.ChartJS.RadarChart
-@using ChartJs.Blazor.Charts
 
-<h4>睡眠分析</h4>
+<button class="btn btn-primary btn-sm py-0" onclick="renderChartTest()">Click me</button>
+
+<h4>栄養素分析</h4>
 <div class="row">
-    <div class="col-12">
-        <ChartJsRadarChart @ref="_radarChart" Config="@_config" Width="100" Height="100"/>
+    <div class="col-10">
+        <p>50g, 1.4mg, 2.3mg, 5mg, 18g, 10mg, 750mg</p>
+        <div class="chart-container" style="position:relative; height: 200px;width: 200px">
+            <canvas id="eiyoChart"></canvas>
         </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-10">
+        <p>浮動棒グラフ</p>
+    </div>
 </div>
 
 
 
-@code {
-    
-    private RadarConfig _config;
-    private ChartJsRadarChart _radarChart;
-    
-    protected override void OnInitialized()
-    {
-        _config = new RadarConfig
-        {
-            Options = new RadarOptions
-            {
-                Scale = new Scale
-                {
-                    Ticks = new LinearCartesianTicks
-                    {
-                        BeginAtZero = true
+<script>
+    function renderChartTest() {
+        renderChart(
+            JSON.stringify({
+                "type": "bar",
+                "data": {
+                    "labels": ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+                    "datasets": [
+                        {
+                            "label": "# of Votes",
+                            "data": [12, 19, 3, 5, 2, 3],
+                            "backgroundColor": [
+                                "rgba(255, 99, 132, 0.2)",
+                                "rgba(54, 162, 235, 0.2)",
+                                "rgba(255, 206, 86, 0.2)",
+                                "rgba(75, 192, 192, 0.2)",
+                                "rgba(153, 102, 255, 0.2)",
+                                "rgba(255, 159, 64, 0.2)"
+                            ],
+                            "borderColor": [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 206, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(153, 102, 255, 1)",
+                                "rgba(255, 159, 64, 1)"
+                            ],
+                            "borderWidth": 1
+                        }
+                    ]
+                },
+                "options": {
+                    "scales": {
+                        "yAxes": [
+                            {
+                                "ticks": {
+                                    "beginAtZero": true
+                                }
+                            }
+                        ]
                     }
                 }
-            }
-        };
-
-        _config.Data.Labels.AddRange(new[] { "タンパク質(g)", "ビタミンB6(mg)", "ビタミンB12(mg)","鉄分(mg)", "食物繊維(g)", "亜鉛(mg)", "カルシウム(mg)" });
-        <!-----
-        60g, 1.4mg, 2.4mg, 7mg, 20g, 10mg, 700mg 
-        ----->
-        var dataset = new RadarDataset
-        {
-            Label = "推定必要摂取量(75歳以上男性)",
-            BackgroundColor = "rgba(255,99,132,0.2)",
-            BorderColor = "rgba(255,99,132,1)",
-            PointBackgroundColor = "rgba(255,99,132,1)",
-            PointBorderColor = "#fff",
-            PointHoverBackgroundColor = "#fff",
-            PointHoverBorderColor = "rgba(255,99,132,1)",
-            LineTension = 0,
-            Data = new List<double> { 60, 1.4, 2.4, 7, 20, 10, 700 }
-        };
-        var dataset2 = new RadarDataset
-        {
-            Label = "My Second dataset",
-            BackgroundColor = "rgba(54,162,235,0.2)",
-            BorderColor = "rgba(54,162,235,1)",
-            PointBackgroundColor = "rgba(54,162,235,1)",
-            PointBorderColor = "#fff",
-            PointHoverBackgroundColor = "#fff",
-            PointHoverBorderColor = "rgba(54,162,235,1)",
-            LineTension = 0,
-            Data = new List<double> { 10, 20, 30, 40, 50, 60, 70 }
-        };
-        
-        _config.Data.Datasets.Add(dataset);
-        _config.Data.Datasets.Add(dataset2);
+            })
+        );
     }
+</script>
+
+@code {
 
 }

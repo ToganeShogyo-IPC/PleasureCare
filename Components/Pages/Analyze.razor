@@ -21,11 +21,51 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-12">
+        <p>歩数グラフ</p>
+        <div class="chart-container" style="position:relative; max-width: 500px">
+            <canvas id="HosuuChart"></canvas>
+        </div>
+    </div>
+</div>
 
 
 <script>
+    renderHosuuChart();
     renderSuiminTimeChart();
     renderEiyoChart();
+
+    function renderHosuuChart() {
+        renderChart(
+            JSON.stringify({
+                "type": "bar",
+                "data": {
+                    "labels": ["7/1","7/2","7/3","7/4","7/5","7/6"],
+                    "datasets": [
+                        {
+                            "label": "歩数",
+                            "data": [1,2,3,4,5,6],
+                            "backgroundColor": [
+                                "rgba(54, 162, 235, 0.9)",
+                                "rgba(54, 162, 235, 0.9)",
+                                "rgba(54, 162, 235, 0.9)",
+                                "rgba(54, 162, 235, 0.9)",
+                                "rgba(54, 162, 235, 0.9)",
+                                "rgba(54, 162, 235, 0.9)"
+                            ],
+                            "borderWidth": 1
+                        }
+                    ]
+                },
+                "options": {
+                    "scales": {
+                        "yAxes"
+                    }
+                }
+            })
+            , "HosuuChart");
+    }
 
     function renderSuiminTimeChart() {
         renderChart(
@@ -35,8 +75,8 @@
                     "labels": ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
                     "datasets": [
                         {
-                            "label": "a",
-                            "data": [[12, 6], [19, 10], [3, 15], [13, 5], [2, 12], [3, 19]],
+                            "label":"",
+                            "data": [["23:00:00", "06:30:00"], ["23:00:00", "06:30:00"], ["23:00:00", "06:30:00"], ["23:00:00", "06:30:00"], ["23:00:00", "06:30:00"], ["23:00:00", "06:30:00"]],
                             "backgroundColor": [
                                 "rgba(255, 99, 132, 0.2)",
                                 "rgba(54, 162, 235, 0.2)",
@@ -58,7 +98,14 @@
                     ]
                 },
                 "options": {
-
+                    "legend": {
+                        "display": false
+                    },
+                    "scales":{
+                        "y":{
+                            "type":'time'
+                        }
+                    }
                 }
             })
             , "SuiminChart");
@@ -69,11 +116,11 @@
             JSON.stringify({
                 "type": "radar",
                 "data": {
-                    "labels": ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+                    "labels": ["タンパク質", "食物繊維", "ビタミンB6", "ビタミンB12", "鉄分", "亜鉛"],
                     "datasets": [
                         {
-                            "label": "# of Votes",
-                            "data": [6, 10, 15, 12, 19, 6],
+                            "label": "推定必要栄養素",
+                            "data": [1,1,1,1,1,1],
                             "backgroundColor": [
                                 "rgba(255, 99, 132, 0.2)",
                                 "rgba(54, 162, 235, 0.2)",
@@ -99,6 +146,7 @@
             })
             , "eiyoChart");
     }
+
 </script>
 
 @code {

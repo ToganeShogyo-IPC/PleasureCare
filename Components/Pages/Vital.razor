@@ -10,10 +10,18 @@
     頻度低い
 ----->
 <div style="@((MarkupString)sw_form)">
+    <p>身長</p>
+    <div class="row mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control form-control-lg" id="shintyoBox" placeholder="身長" @bind="tall" />
+            <label class="input-group-text">cm</label>
+        </div>
+    </div>
+    
     <p>体重</p>
     <div class="row mb-3">
         <div class="input-group">
-            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重" @bind="weight" />
+            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重" @bind="weight"/>
             <label class="input-group-text">Kg</label>
         </div>
     </div>
@@ -71,7 +79,7 @@
     <p>歩数</p>
     <div class="row mb-3">
         <div class="input-group">
-            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="歩数" @bind="steps" />
+            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="歩数" @bind="steps"/>
             <label class="input-group-text">歩</label>
         </div>
     </div>
@@ -96,6 +104,7 @@
 
 @code {
     string weight;
+    string tall;
     string steps;
     string wakeuph;
     string wakeupm;
@@ -115,6 +124,7 @@
         {
             { "uuid", ShareValues.value.uuid},
             { "weight",weight},
+            { "tall",tall},
             { "steps", steps},
             { "gotobed",gotobedh + ":" + gotobedm},
             { "wakeup",wakeuph + ":" + wakeupm},

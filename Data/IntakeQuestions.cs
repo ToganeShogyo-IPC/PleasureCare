@@ -56,7 +56,7 @@ namespace SisuCare.Data
                 new IntakeQuestions()
                 {
                     question = (MarkupString)"<h2>100-7はいくつですか？</h2>",
-                    voicealt ="100-7はいくつですか",
+                    voicealt ="100ひく7はいくつですか",
                     score = 1,
                     Trueanswers = new List<string>() { "93" }
                 }
@@ -65,7 +65,7 @@ namespace SisuCare.Data
                 new IntakeQuestions()
                 {
                     question = (MarkupString)"<h2>93-7はいくつですか？</h2>",
-                    voicealt ="93-7はいくつですか",
+                    voicealt ="93ひく7はいくつですか",
                     score = 1,
                     is_continue = true,
                     Trueanswers = new List<string>() { "86" }
@@ -75,7 +75,7 @@ namespace SisuCare.Data
                 new IntakeQuestions()
                 {
                     question = (MarkupString)"<h2>86-7はいくつですか？</h2>",
-                    voicealt ="86-7はいくつですか",
+                    voicealt ="86ひく7はいくつですか",
                     score = 1,
                     is_continue = true,
                     Trueanswers = new List<string>() { "79" }
@@ -98,7 +98,7 @@ namespace SisuCare.Data
                     question = (MarkupString)"<h2>設問3の単語を3つ思い出して読み上げてください。</h2>",
                     voicealt ="設問3の単語を3つ思い出して読み上げてください。",
                     score = 3,
-                    Trueanswers = new List<string>() { "桜", "猫", "電車" }
+                    Trueanswers = new List<string>() { "電卓", "マウス", "とっちー", "でんたく", "まうす", "デンタク", "トッチー", "栃" }
                 }
             },
             {

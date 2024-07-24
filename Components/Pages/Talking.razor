@@ -47,7 +47,7 @@
     public int TotalScore = 0;
 
     public async void SpeakText() =>
-        await TextToSpeech.Default.SpeakAsync(questions.question[nowans].voicealt);
+        await TextToSpeech.Default.SpeakAsync(questions.question[nowans-1].voicealt);
 
     public async void putbutton()
     {

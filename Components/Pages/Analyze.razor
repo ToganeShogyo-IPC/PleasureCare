@@ -4,24 +4,30 @@
 
 <h4>栄養素分析</h4>
 <div class="row">
-    <div class="col-10">
+    <div class="col-12">
         <p>50g, 1.4mg, 2.3mg, 5mg, 18g, 10mg, 750mg</p>
-        <div class="chart-container" style="position:relative; height: 200px;width: 200px">
+        <div class="chart-container" style="position:relative; max-width: 800px">
             <canvas id="eiyoChart"></canvas>
         </div>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-10">
+    <div class="col-12">
         <p>浮動棒グラフ</p>
+        <div class="chart-container" style="position:relative; max-width: 800px">
+            <canvas id="SuiminChart"></canvas>
+        </div>
     </div>
 </div>
 
 
 
 <script>
-    function renderChartTest() {
+    renderSuiminTimeChart();
+    renderEiyoChart();
+
+    function renderSuiminTimeChart() {
         renderChart(
             JSON.stringify({
                 "type": "bar",
@@ -29,8 +35,8 @@
                     "labels": ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
                     "datasets": [
                         {
-                            "label": "# of Votes",
-                            "data": [12, 19, 3, 5, 2, 3],
+                            "label": "a",
+                            "data": [[12,6], [19,10], [3,15], [13,5], [2,12], [3,19]],
                             "backgroundColor": [
                                 "rgba(255, 99, 132, 0.2)",
                                 "rgba(54, 162, 235, 0.2)",
@@ -52,18 +58,46 @@
                     ]
                 },
                 "options": {
-                    "scales": {
-                        "yAxes": [
-                            {
-                                "ticks": {
-                                    "beginAtZero": true
-                                }
-                            }
-                        ]
-                    }
+                    
                 }
             })
-        ,"eiyoChart");
+            , "SuiminChart");
+    }
+
+    function renderEiyoChart() {
+        renderChart(
+            JSON.stringify({
+                "type": "radar",
+                "data": {
+                    "labels": ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+                    "datasets": [
+                        {
+                            "label": "# of Votes",
+                            "data": [6, 10, 15, 12, 19, 6],
+                            "backgroundColor": [
+                                "rgba(255, 99, 132, 0.2)",
+                                "rgba(54, 162, 235, 0.2)",
+                                "rgba(255, 206, 86, 0.2)",
+                                "rgba(75, 192, 192, 0.2)",
+                                "rgba(153, 102, 255, 0.2)",
+                                "rgba(255, 159, 64, 0.2)"
+                            ],
+                            "borderColor": [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 206, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(153, 102, 255, 1)",
+                                "rgba(255, 159, 64, 1)"
+                            ],
+                            "borderWidth": 1
+                        }
+                    ]
+                },
+                "options": {
+                }
+            })
+            , "eiyoChart");
     }
 </script>
 

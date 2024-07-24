@@ -30,10 +30,10 @@
     <script src="lib/Chartjs/Chart.min.js"></script>
     <script>
         function renderChart(chartJson,renderCanvas) {
-            if (window.chartObj) {
-                console.log('destroy chartObj');
-                window.chartObj.destroy();
-            }
+            //if (window.chartObj) {
+            //    console.log('destroy chartObj');
+            //    window.chartObj.destroy();
+            //}
             console.log("json=" + chartJson);
             var ctx = document.getElementById(renderCanvas);
             window.chartObj = new Chart(ctx, JSON.parse(chartJson));

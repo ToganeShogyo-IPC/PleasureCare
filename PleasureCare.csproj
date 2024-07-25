@@ -129,10 +129,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\lib\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Content Update="wwwroot\css\app.css">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
@@ -145,6 +141,10 @@
       <Content Update="wwwroot\css\bootstrap\bootstrap.min.css">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\lib\momentjs\" />
     </ItemGroup>
 
 </Project>

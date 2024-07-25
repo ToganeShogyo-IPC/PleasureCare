@@ -38,15 +38,15 @@
 
     function renderHosuuChart() {
         renderChart(
-            JSON.stringify({
-                "type": "bar",
-                "data": {
-                    "labels": ["7/1","7/2","7/3","7/4","7/5","7/6"],
-                    "datasets": [
+            {
+                type: "bar",
+                data: {
+                    labels: ["7/1","7/2","7/3","7/4","7/5","7/6"],
+                    datasets: [
                         {
-                            "label": "歩数",
-                            "data": [1,2,3,4,5,6],
-                            "backgroundColor": [
+                            label: "歩数",
+                            data: [1,2,3,4,5,6],
+                            backgroundColor: [
                                 "rgba(54, 162, 235, 0.9)",
                                 "rgba(54, 162, 235, 0.9)",
                                 "rgba(54, 162, 235, 0.9)",
@@ -54,84 +54,91 @@
                                 "rgba(54, 162, 235, 0.9)",
                                 "rgba(54, 162, 235, 0.9)"
                             ],
-                            "borderWidth": 1
+                            borderWidth: 1
                         }
                     ]
                 },
-                "options": {
-                    "scales": {
-                        "yAxes": [{
-                            "ticks": {
-                                "min": 0, // 最小値
-                                "max": 20, // 最大値
-                                "stepSize": 1 // メモリの間隔
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0, // 最小値
+                                max: 20, // 最大値
+                                stepSize: 1 // メモリの間隔
                             }
                         }]
                     }
                 }
-            })
+            }
             , "HosuuChart");
     }
 
+    var sleepData = [
+            { sleep: moment('2024-08-01T23:00:00'), wake: moment('2024-08-02T07:00:00') },
+            { sleep: moment('2024-08-02T23:30:00'), wake: moment('2024-08-03T06:30:00') },
+            { sleep: moment('2024-08-03T23:00:00'), wake: moment('2024-08-04T07:00:00') },
+        ];
+
     function renderSuiminTimeChart() {
-        renderChart(
-            JSON.stringify({
-                "type": "bar",
-                "data": {
-                    "labels": ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-                    "datasets": [
-                        {
-                            "label":"",
-                            "data": [[23,31], [23,31],[23,31],[23,31],[23,31],[23,31]],
-                            "backgroundColor": [
-                                "rgba(255, 99, 132, 0.2)",
-                                "rgba(54, 162, 235, 0.2)",
-                                "rgba(255, 206, 86, 0.2)",
-                                "rgba(75, 192, 192, 0.2)",
-                                "rgba(153, 102, 255, 0.2)",
-                                "rgba(255, 159, 64, 0.2)"
-                            ],
-                            "borderColor": [
-                                "rgba(255, 99, 132, 1)",
-                                "rgba(54, 162, 235, 1)",
-                                "rgba(255, 206, 86, 1)",
-                                "rgba(75, 192, 192, 1)",
-                                "rgba(153, 102, 255, 1)",
-                                "rgba(255, 159, 64, 1)"
-                            ],
-                            "borderWidth": 1
-                        }
-                    ]
-                },
-                "options": {
-                    "legend": {
-                        "display": false
-                    },
-                    "scales": {
-                        "yAxes": [{
-                            "ticks": {
-                                "min": 34, // 最小値
-                                "max": 18, // 最大値
-                                "stepSize": 1 // メモリの間隔
-                            }
-                        }]
-                    }
-                }
-            })
-            , "SuiminChart");
+        var sleepData = [
+            { sleep: moment('2024-08-01T23:00:00'), wake: moment('2024-08-02T07:00:00') },
+            { sleep: moment('2024-08-02T23:30:00'), wake: moment('2024-08-03T06:30:00') },
+            { sleep: moment('2024-08-03T23:00:00'), wake: moment('2024-08-04T07:00:00') },
+            // 他の日付のデータ...
+        ];
+var chartData = sleepData.map(function (item, index) {
+            return {
+                x: `Day ${index + 1}`,
+                y: item.sleep.valueOf(),
+                y2: item.wake.valueOf()
+            };
+        });
+const ctx = document.getElementById('myChart').getContext('2d');
+const data = {
+  labels: chartData.map(item => item.x),
+  datasets:[{
+                    label: '睡眠時間',
+                    data: chartData.map(item => ({
+                        x: (item.y2 - item.y) / (1000 * 60 * 60),  // ミリ秒を時間に変換
+                        y: item.x
+                    })),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+};
+
+const config = {
+  type: 'line',
+  data: data,
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Chart.js Line Chart'
+      }
+    }
+  },
+};
+
+renderChart(config,"SuiminChart");
     }
 
     function renderEiyoChart() {
         renderChart(
-            JSON.stringify({
-                "type": "radar",
-                "data": {
-                    "labels": ["タンパク質", "食物繊維", "ビタミンB6", "ビタミンB12", "鉄分", "亜鉛"],
-                    "datasets": [
+           {
+                type: "radar",
+                data: {
+                    labels: ["タンパク質", "食物繊維", "ビタミンB6", "ビタミンB12", "鉄分", "亜鉛"],
+                    datasets: [
                         {
-                            "label": "推定必要栄養素",
-                            "data": [1,1,1,1,1,1],
-                            "backgroundColor": [
+                            label: "推定必要栄養素",
+                            data: [1,1,1,1,1,1],
+                            backgroundColor: [
                                 "rgba(255, 99, 132, 0.2)",
                                 "rgba(54, 162, 235, 0.2)",
                                 "rgba(255, 206, 86, 0.2)",
@@ -139,7 +146,7 @@
                                 "rgba(153, 102, 255, 0.2)",
                                 "rgba(255, 159, 64, 0.2)"
                             ],
-                            "borderColor": [
+                            borderColor: [
                                 "rgba(255, 99, 132, 1)",
                                 "rgba(54, 162, 235, 1)",
                                 "rgba(255, 206, 86, 1)",
@@ -147,13 +154,13 @@
                                 "rgba(153, 102, 255, 1)",
                                 "rgba(255, 159, 64, 1)"
                             ],
-                            "borderWidth": 1
+                            borderWidth: 1
                         }
                     ]
                 },
-                "options": {
+                options: {
                 }
-            })
+            }
             , "eiyoChart");
     }
 

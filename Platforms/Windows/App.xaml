@@ -1,8 +1,8 @@
 ﻿<maui:MauiWinUIApplication
-    x:Class="SisuCare.WinUI.App"
+    x:Class="PleasureCare.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
-    xmlns:local="using:SisuCare.WinUI">
+    xmlns:local="using:PleasureCare.WinUI">
 
 </maui:MauiWinUIApplication>

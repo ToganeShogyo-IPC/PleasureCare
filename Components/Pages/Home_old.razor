@@ -1,0 +1,90 @@
+﻿@page "/Home-old"
+@using PleasureCare.Data
+@inject NavigationManager NavigationManager
+@code{
+    [CascadingParameter]
+    private ShareValues? ShareValues { get; set; }
+    string debugtext;
+    string logoutcore;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            AccountService.AccountBody? setting = AccountService.LoSaSettings("authid");
+            try
+            {
+                if (setting==null)
+                {
+                    NavigationManager.NavigateTo("./Login");
+                }
+                else if (setting.authid != null)
+                {
+                    try
+                    {
+                        AccountService.LogAccRoot acc = await AccountService.LoginAccount(is_startup: true);
+                        ShareValues.value = acc.LogAccDataBody[0];
+                        debugtext = ShareValues.value.name;
+                        logoutcore = "<div class='row mb-2'><div class='col-sm-12'><div class='card'><div class='card-body'><a href='Accounts' class='link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover'><h2 class='card-title'>アカウント設定  <i style='font-size: 1.3rem' class='bi bi-chevron-right'></i></h2></a><p class='card-description'>アカウントに関する設定を行います。</p></div></div></div></div>";
+                        StateHasChanged();
+                    }
+                    catch
+                    {
+                        AccountService.LogoutAccount(is_local:true);
+                        NavigationManager.NavigateTo("./Login");
+                    }
+                    
+                }
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        return;
+    }
+
+}
+<div class="container">
+    <div class="row mb-2">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <a href="Diary" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"><h2 class="card-title">日記  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2></a>
+                    <p class="card-description">今日の出来事を共有できる。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <a href="Vital" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"><h2 class="card-title">健康観察  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2></a>
+                    <p class="card-description">本日の健康・生活状況の記録</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <a href="Talking" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"><h2 class="card-title">東商式スケール  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2></a>
+                    <p class="card-description">現在の認知力状況などを記録します。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <a href="Analyze" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"><h2 class="card-title">分析  <i style="font-size: 1.3rem" class="bi bi-chevron-right"></i></h2></a>
+                    <p class="card-description">記録されたデータからグラフや状態を分析します。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @((MarkupString)logoutcore)
+</div>

@@ -1,13 +1,164 @@
 ﻿@page "/analyze"
-<h1>分析</h1>
 
-<h4>あるデータ</h4>
-<p>年齢、身長、体重、起床時間、就寝時間、睡眠時間、日付,食べた食事(栄養素)</p>
-<h4>結果</h4>
-<p>BMI,体脂肪量,体脂肪率,睡眠時間の推移,不足している栄養素</p>
+<button class="btn btn-primary btn-sm py-0" onclick="renderChartTest()">Click me</button>
+
+<h4>栄養素分析</h4>
+<div class="row">
+    <div class="col-12">
+        <p>50g, 1.4mg, 2.3mg, 5mg, 18g, 10mg, 750mg</p>
+        <div class="chart-container" style="position:relative; max-width: 800px">
+            <canvas id="eiyoChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <p>浮動棒グラフ</p>
+        <div class="chart-container" style="position:relative; max-width: 500px">
+            <canvas id="SuiminChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <p>歩数グラフ</p>
+        <div class="chart-container" style="position:relative; max-width: 500px">
+            <canvas id="HosuuChart"></canvas>
+        </div>
+    </div>
+</div>
 
 
+<script>
+    renderHosuuChart();
+    renderSuiminTimeChart();
+    renderEiyoChart();
+
+    function renderHosuuChart() {
+        renderChart(
+            JSON.stringify({
+                "type": "bar",
+                "data": {
+                    "labels": ["7/1","7/2","7/3","7/4","7/5","7/6"],
+                    "datasets": [
+                        {
+                            "label": "歩数",
+                            "data": [1,2,3,4,5,6],
+                            "backgroundColor": [
+                                "rgba(54, 162, 235, 0.9)",
+                                "rgba(54, 162, 235, 0.9)",
+                                "rgba(54, 162, 235, 0.9)",
+                                "rgba(54, 162, 235, 0.9)",
+                                "rgba(54, 162, 235, 0.9)",
+                                "rgba(54, 162, 235, 0.9)"
+                            ],
+                            "borderWidth": 1
+                        }
+                    ]
+                },
+                "options": {
+                    "scales": {
+                        "yAxes": [{
+                            "ticks": {
+                                "min": 0, // 最小値
+                                "max": 20, // 最大値
+                                "stepSize": 1 // メモリの間隔
+                            }
+                        }]
+                    }
+                }
+            })
+            , "HosuuChart");
+    }
+
+    function renderSuiminTimeChart() {
+        renderChart(
+            JSON.stringify({
+                "type": "bar",
+                "data": {
+                    "labels": ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+                    "datasets": [
+                        {
+                            "label":"",
+                            "data": [[23,31], [23,31],[23,31],[23,31],[23,31],[23,31]],
+                            "backgroundColor": [
+                                "rgba(255, 99, 132, 0.2)",
+                                "rgba(54, 162, 235, 0.2)",
+                                "rgba(255, 206, 86, 0.2)",
+                                "rgba(75, 192, 192, 0.2)",
+                                "rgba(153, 102, 255, 0.2)",
+                                "rgba(255, 159, 64, 0.2)"
+                            ],
+                            "borderColor": [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 206, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(153, 102, 255, 1)",
+                                "rgba(255, 159, 64, 1)"
+                            ],
+                            "borderWidth": 1
+                        }
+                    ]
+                },
+                "options": {
+                    "legend": {
+                        "display": false
+                    },
+                    "scales": {
+                        "yAxes": [{
+                            "ticks": {
+                                "min": 34, // 最小値
+                                "max": 18, // 最大値
+                                "stepSize": 1 // メモリの間隔
+                            }
+                        }]
+                    }
+                }
+            })
+            , "SuiminChart");
+    }
+
+    function renderEiyoChart() {
+        renderChart(
+            JSON.stringify({
+                "type": "radar",
+                "data": {
+                    "labels": ["タンパク質", "食物繊維", "ビタミンB6", "ビタミンB12", "鉄分", "亜鉛"],
+                    "datasets": [
+                        {
+                            "label": "推定必要栄養素",
+                            "data": [1,1,1,1,1,1],
+                            "backgroundColor": [
+                                "rgba(255, 99, 132, 0.2)",
+                                "rgba(54, 162, 235, 0.2)",
+                                "rgba(255, 206, 86, 0.2)",
+                                "rgba(75, 192, 192, 0.2)",
+                                "rgba(153, 102, 255, 0.2)",
+                                "rgba(255, 159, 64, 0.2)"
+                            ],
+                            "borderColor": [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 206, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(153, 102, 255, 1)",
+                                "rgba(255, 159, 64, 1)"
+                            ],
+                            "borderWidth": 1
+                        }
+                    ]
+                },
+                "options": {
+                }
+            })
+            , "eiyoChart");
+    }
+
+</script>
 
 @code {
-    
+
 }

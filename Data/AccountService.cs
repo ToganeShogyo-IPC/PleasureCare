@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
 
-namespace SisuCare.Data
+namespace PleasureCare.Data
 {
     public class ShareValues
     {

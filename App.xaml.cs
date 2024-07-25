@@ -1,4 +1,4 @@
-﻿namespace SisuCare;
+﻿namespace PleasureCare;
 
 public partial class App : Application
 {

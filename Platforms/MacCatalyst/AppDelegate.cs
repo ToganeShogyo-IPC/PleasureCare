@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace SisuCare;
+namespace PleasureCare;
 
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate

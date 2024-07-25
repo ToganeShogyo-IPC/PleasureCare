@@ -1,17 +1,32 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿<div class="top-row ps-3 navbar" style="background-color: #005d64">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">SisuCare</a>
+        <a class="navbar-brand link-light" href="">PleasureCare</a>
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click() " style="background-color: #005d64">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door"></span>
-                <p>ほーむ　</p>
+                <p>ホーム　</p>
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="Diary">
+                <span style="text-align: center; font-size: 1.2rem;" class="bi bi-journal-richtext" aria-hidden="true"></span> 日記
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink style="align-items: center" class="nav-link" href="Vital">
+                <span style="text-align: center; font-size: 1.2rem;" class="bi bi-heart-pulse" aria-hidden="true"></span> 健康観察
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink style="align-items: center" class="nav-link" href="Talking">
+                <span style="text-align: center; font-size: 1.2rem;" class="bi bi-clipboard-check" aria-hidden="true"></span> 東商式スケール
             </NavLink>
         </div>
         <div class="nav-item px-3">
@@ -20,24 +35,14 @@
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink style="align-items: center" class="nav-link" href="Vital">
-                <span style="text-align: center; font-size: 1.2rem;" class="bi bi-heart-pulse" aria-hidden="true"></span> バイタル
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink style="align-items: center" class="nav-link" href="Talking">
-                <span style="text-align: center; font-size: 1.2rem;" class="bi bi-clipboard-check" aria-hidden="true"></span> 問診
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
             <NavLink style="align-items: center" class="nav-link" href="Login">
-                ろぐいん(Debug)
+                ログイン
             </NavLink>
         </div>
     </nav>
 </div>
 
-@code{
-    
+@code {
+
 
 }

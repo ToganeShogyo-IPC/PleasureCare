@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace SisuCare;
+namespace PleasureCare;
 
 public class Program
 {

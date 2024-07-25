@@ -72,60 +72,53 @@
             }
             , "HosuuChart");
     }
-
-    var sleepData = [
-            { sleep: moment('2024-08-01T23:00:00'), wake: moment('2024-08-02T07:00:00') },
-            { sleep: moment('2024-08-02T23:30:00'), wake: moment('2024-08-03T06:30:00') },
-            { sleep: moment('2024-08-03T23:00:00'), wake: moment('2024-08-04T07:00:00') },
-        ];
-
+    
     function renderSuiminTimeChart() {
+    
         var sleepData = [
             { sleep: moment('2024-08-01T23:00:00'), wake: moment('2024-08-02T07:00:00') },
             { sleep: moment('2024-08-02T23:30:00'), wake: moment('2024-08-03T06:30:00') },
             { sleep: moment('2024-08-03T23:00:00'), wake: moment('2024-08-04T07:00:00') },
             // 他の日付のデータ...
         ];
-var chartData = sleepData.map(function (item, index) {
+        var chartData = sleepData.map(function (item, index) {
             return {
                 x: `Day ${index + 1}`,
                 y: item.sleep.valueOf(),
                 y2: item.wake.valueOf()
             };
         });
-const ctx = document.getElementById('myChart').getContext('2d');
-const data = {
-  labels: chartData.map(item => item.x),
-  datasets:[{
-                    label: '睡眠時間',
-                    data: chartData.map(item => ({
-                        x: (item.y2 - item.y) / (1000 * 60 * 60),  // ミリ秒を時間に変換
-                        y: item.x
-                    })),
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-};
-
-const config = {
-  type: 'line',
-  data: data,
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Chart.js Line Chart'
-      }
-    }
-  },
-};
-
-renderChart(config,"SuiminChart");
+        const data = {
+            labels: chartData.map(item => item.x),
+            datasets:[{
+                label: '睡眠時間',
+                data: chartData.map(item => ({
+                    x: (item.y2 - item.y) / (1000 * 60 * 60),  // ミリ秒を時間に変換
+                    y: item.x
+                })),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+    
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Chart.js Line Chart'
+                    }
+                }
+            },
+        };
+        renderChart(config,"SuiminChart");
     }
 
     function renderEiyoChart() {

@@ -24,12 +24,10 @@
     string nikkiText;
     string message;
     bool is_hakkaEvent = true;
-    //public string nanika = DateTime.Now.ToString("M月dd日の日記");
-    public string nanika = "6月17日の日記";
+    public string nanika = DateTime.Now.ToString("M月dd日の日記");
     public string lastup;
     private readonly HttpClient client = new HttpClient();
 
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     public class DataBody
     {
         public string uuid { get; set; }
@@ -99,8 +97,7 @@
                     else
                     {
                         nikkiText = js_l.DataBody[0].diarybody;
-                        //lastup = DateTime.Parse(js_l.DataBody[0].lastupdate).ToString("yyyy年MM月dd日");
-                        lastup = "2024年6月17日";
+                        lastup = DateTime.Parse(js_l.DataBody[0].lastupdate).ToString("yyyy年MM月dd日");
                         StateHasChanged();
                     }
                 }

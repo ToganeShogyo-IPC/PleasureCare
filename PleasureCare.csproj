@@ -21,10 +21,10 @@
         <Nullable>enable</Nullable>
 
         <!-- Display name -->
-        <ApplicationTitle>SisuCare</ApplicationTitle>
+        <ApplicationTitle>PleasureCare</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.SisuCare</ApplicationId>
+        <ApplicationId>com.companyname.PleasureCare</ApplicationId>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>

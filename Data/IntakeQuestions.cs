@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SisuCare.Data
+namespace PleasureCare.Data
 {
     public class IntakeQuestions
     {

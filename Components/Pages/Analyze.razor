@@ -1,45 +1,58 @@
 ﻿@page "/analyze"
-<div class="row">
-    <div class="col-3">
-        <button class="btn btn-primary btn-sm py-0" onclick="renderChartTest()">Click me</button>
-    </div>    
-</div>
+@using PleasureCare.Data
+@inject IJSRuntime JSRuntime
 
-<h4>栄養素分析</h4>
-
-<div class="row">
-    <div class="col-12">
-        <p>不足しがちな栄養素の推定必要摂取量と推定摂取量の比率</p>
-        <div class="chart-container" style="position:relative; max-width: 800px">
-            <canvas id="eiyoChart"></canvas>
+<p>分析結果</p>
+<ul class="nav nav-tabs" id="chartTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="ToshoraderChart-tab" data-bs-toggle="tab" data-bs-target="#ToshoraderChart-container" type="button" role="tab" aria-controls="ToshoraderChart-container" aria-selected="false">東商式スケール分析</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="TosholineChart-tab" data-bs-toggle="tab" data-bs-target="#TosholineChart-container" type="button" role="tab" aria-controls="TosholineChart-container" aria-selected="true">健康観察分析</button>
+    </li>
+</ul>
+<div class="tab-content" id="chartTabsContent">
+    <div class="tab-pane fade show active" id="TosholineChart-container" role="tabpanel" aria-labelledby="TosholineChart-tab">
+        <div class="chart-container">
+            <div style="width: 300px;">
+                <p>不足しがちな栄養素の推定必要摂取量と推定摂取量の比率</p>
+                <canvas id="eiyoChart"></canvas>
+                <p>日々の睡眠時間の推移</p>
+                <canvas id="SuiminChart"></canvas>
+                <p>日々の歩数の推移</p>
+                <canvas id="HosuuChart"></canvas>
+                
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="ToshoraderChart-container" role="tabpanel" aria-labelledby="ToshoraderChart-tab">
+        <div class="chart-container">
+            <div style="width: 300px;">
+                <h6>東商式スケール</h6>
+                <p>分野ごとの満点との比率</p>
+                <canvas id="ToshoraderChart"></canvas>
+                <p>点数の推移</p>
+                <canvas id="TosholineChart"></canvas>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <p>折れ線グラフ</p>
-        <div class="chart-container" style="position:relative; max-width: 500px">
-            <canvas id="SuiminChart"></canvas>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-12">
-        <p>歩数グラフ</p>
-        <div class="chart-container" style="position:relative; max-width: 500px">
-            <canvas id="HosuuChart"></canvas>
-        </div>
-    </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    renderEiyoChart();
-    renderSuiminTimeChart();
-    renderHosuuChart();
-
+    const JsonData = [];
+    
+    function receveJson(json){
+        jsonData = JSON.parse(json);
+        console.debug(json);
+        renderEiyoChart();
+        renderSuiminTimeChart();
+        renderHosuuChart();
+        renderTosholineChart();
+        renderToshoraderChart();
+    }
+    
     function renderHosuuChart() {
         renderChart(
             {
@@ -94,7 +107,7 @@
         ];
         var chartData = sleepData.map(function (item, index) {
             return {
-                x: `Day ${index + 1}`,
+                x: item.wake.format("MM月DD日"),
                 y: item.sleep.valueOf(),
                 y2: item.wake.valueOf()
             };
@@ -147,11 +160,12 @@
            {
                 type: "radar",
                 data: {
-                    labels: ["タンパク質", "食物繊維", "ビタミンB6", "ビタミンB12", "鉄分", "亜鉛","カルシウム"],
+                    labels: ["タンパク質", "食物繊維", "ビタミンB6", "ビタミンB12", "鉄分", "亜鉛","カルシウム","塩分"],
+                        // ÷55 ÷18.5 ÷1.25 ÷2.4 ÷7 ÷9 ÷650 ÷6.5
                     datasets: [
                         {
                             label: "推定必要栄養素",
-                            data: [1,1,1,1,1,1,1],
+                            data: [1,1,1,1,1,1,1,1],
                             backgroundColor: [
                                 "rgba(0, 0, 0, 0)"
                             ],
@@ -162,7 +176,7 @@
                         },
                         {
                             label: "あなたの推定摂取栄養素",
-                            data: [0.9,0.8,0.91,1.01,0.98,0.86,0.65],
+                            data: [0.9,0.8,0.91,1.01,0.98,0.86,0.65,1.1],
                             backgroundColor: [
                                 "rgba(54, 162, 235, 0.2)"
                             ],
@@ -179,14 +193,96 @@
                             min:0,
                             max:1.2,
                         }
-                    }
+                    },
                 }
             }
             , "eiyoChart");
     }
 
+    function renderTosholineChart() {
+        
+        const data = {
+            labels: ["４月","５月","６月","７月","８月","９月"],
+            datasets:[{
+                label: '点数の推移',
+                data: [18,15,16,14,19,20],
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+            }]
+        };
+
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                scales:{
+                    y:{
+                        max:21,
+                    }
+                }
+            },
+        };
+
+        renderChart(config,"TosholineChart");
+    }
+
+    function renderToshoraderChart() {
+        renderChart(
+            {
+                type: "radar",
+                data: {
+                    labels: ["日時の見当識","単語の記銘","計算","数字の逆唱","言葉の遅延再生","言葉の流暢性"],
+                        // ÷４　÷3　÷3　÷１　÷3　÷5
+                    datasets: [
+                        {
+                            label: "",
+                            data: [1,1,0.67,1,0.67,0.6],
+                            backgroundColor: [
+                                "rgba(255, 99, 132, 0.2)"
+                            ],
+                            borderColor: [
+                                "rgba(255, 99, 132, 0.8)"
+                            ],
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        title: {
+                            display: false,
+                        },
+                    },
+                    scales:{
+                        r:{
+                            min:0,
+                            max:1
+                        }
+                    }
+                }
+            }
+            , "ToshoraderChart");
+    }
+    
+
 </script>
 
 @code {
-    
+    [CascadingParameter]
+    private ShareValues? ShareValues { get; set; }
+    private readonly HttpClient client = new HttpClient();
+
+    protected override async Task OnInitializedAsync()
+    {
+        string url = $"https://api.schnetworks.net/v1/vital-info.php?uuid={ShareValues.value.uuid}";
+        string json = await client.GetStringAsync(url);
+
+        await JSRuntime.InvokeVoidAsync("receveJson", json);
+    }
+
 }

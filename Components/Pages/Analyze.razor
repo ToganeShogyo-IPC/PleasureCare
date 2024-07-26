@@ -41,32 +41,47 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    const JsonData = [];
-    const sleeptimes = [];
     
-    function receveJson(json){
-        jsonData = JSON.parse(json);
+    function receveJsonInta(json){ 
+
+    }
+
+    function receveJsonVit(json){
+        var jsonData = JSON.parse(json);
+        var sleep = [];
+        var eiyo = [];
+        var eiyos;
+        var hosuulab = [];
+        var hosuudata = [];
         console.debug(json);
+        jsonData.DataBody.forEach((value) => { 
+            sleep.push({ sleep: moment(value.gotobed), wake: moment(value.wakeup) });
+            eiyos = JSON.parse(value.eatgohan);
+            eiyo = [(eiyos.たんぱく質) / 55 > 1.2 ? 1.2 : (eiyos.たんぱく質) / 55, (eiyos.食物繊維総量) / 18.5 > 1.2 ? 1.2 : (eiyos.食物繊維総量) / 18.5, (eiyos.ビタミンB6) / 1.25 > 1.2 ? 1.2 : (eiyos.ビタミンB6) / 1.25, (eiyos.ビタミンB12) / 2.4 > 1.2 ? 1.2 : (eiyos.ビタミンB12) / 2.4, (eiyos.鉄) / 7 > 1.2 ? 1.2 : (eiyos.鉄) / 7, (eiyos.亜鉛) / 9 > 1.2 ? 1.2 : (eiyos.亜鉛) / 9, (eiyos.カルシウム) / 650 > 1.2 ? 1.2 : (eiyos.カルシウム) / 650, (eiyos.食塩相当量) / 6.5 > 1.2 ? 1.2 : (eiyos.食塩相当量) / 6.5];
+            hosuulab.push(moment(value.receptiondate).format("MM月DD日"));
+            hosuudata.push(parseInt(value.steps));
+        });
+        renderSuiminTimeChart(sleep.reverse());
+        renderEiyoChart(eiyo);
+        renderHosuuChart(hosuulab.reverse(), hosuudata.reverse());
+        drawgraphs();
     }
     
     function drawgraphs(){
-        renderEiyoChart();
-        renderSuiminTimeChart();
-        renderHosuuChart();
         renderTosholineChart();
         renderToshoraderChart();
     }
     
-    function renderHosuuChart() {
+    function renderHosuuChart(label,data) {
         renderChart(
             {
                 type: "bar",
                 data: {
-                    labels: ["7/1","7/2","7/3","7/4","7/5","7/6","7/7","7/8","7/92","7/10","7/11","7/12","7/13","7/14","7/15"],
+                    labels: label,
                     datasets: [
                         {
                             label:"",
-                            data: [228,130,372,262,376,221,350,860,475,542,382,401,526,123,451,],
+                            data: data,
                             backgroundColor: [
                                 "rgba(54, 162, 235, 0.9)"
                             ],
@@ -95,20 +110,8 @@
             , "HosuuChart");
     }
     
-    function renderSuiminTimeChart() {
+    function renderSuiminTimeChart(sleepData) {
     
-        var sleepData = [
-            { sleep: moment('2024-08-01T23:00:00'), wake: moment('2024-08-02T07:00:00') },
-            { sleep: moment('2024-08-02T23:30:00'), wake: moment('2024-08-03T06:30:00') },
-            { sleep: moment('2024-08-03T23:00:00'), wake: moment('2024-08-04T07:00:00') },
-            { sleep: moment('2024-08-04T21:30:00'), wake: moment('2024-08-05T05:20:00') },
-            { sleep: moment('2024-08-05T21:50:00'), wake: moment('2024-08-06T06:00:00') },
-            { sleep: moment('2024-08-07T03:20:00'), wake: moment('2024-08-07T06:50:00') },
-            { sleep: moment('2024-08-08T01:20:00'), wake: moment('2024-08-08T09:50:00') },
-            { sleep: moment('2024-08-08T22:45:00'), wake: moment('2024-08-09T05:20:00') },
-            { sleep: moment('2024-08-09T23:50:00'), wake: moment('2024-08-10T05:30:00') },
-            // 他の日付のデータ...
-        ];
         var chartData = sleepData.map(function (item, index) {
             return {
                 x: item.wake.format("MM月DD日"),
@@ -159,7 +162,7 @@
         console.debug(data);
     }
 
-    function renderEiyoChart() {
+    function renderEiyoChart(eiyoData) {
         renderChart(
            {
                 type: "radar",
@@ -180,7 +183,7 @@
                         },
                         {
                             label: "あなたの推定摂取栄養素",
-                            data: [0.9,0.8,0.91,1.01,0.98,0.86,0.65,1.1],
+                            data: eiyoData,
                             backgroundColor: [
                                 "rgba(54, 162, 235, 0.2)"
                             ],
@@ -286,7 +289,11 @@
         string url = $"https://api.schnetworks.net/v1/vital-info.php?uuid={ShareValues.value.uuid}";
         string json = await client.GetStringAsync(url);
 
-        await JSRuntime.InvokeVoidAsync("receveJson", json);
+        string url2 = $"https://api.schnetworks.net/v1/intake-res.php?uuid={ShareValues.value.uuid}";
+        string json2 = await client.GetStringAsync(url);
+
+        await JSRuntime.InvokeVoidAsync("receveJsonVit", json);
+        await JSRuntime.InvokeVoidAsync("receveJsonInta", json2);
     }
 
 }

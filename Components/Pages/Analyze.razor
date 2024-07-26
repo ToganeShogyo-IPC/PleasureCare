@@ -42,10 +42,14 @@
 
 <script>
     const JsonData = [];
+    const sleeptimes = [];
     
     function receveJson(json){
         jsonData = JSON.parse(json);
         console.debug(json);
+    }
+    
+    function drawgraphs(){
         renderEiyoChart();
         renderSuiminTimeChart();
         renderHosuuChart();

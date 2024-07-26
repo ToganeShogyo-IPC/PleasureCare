@@ -52,8 +52,10 @@
                 {"diarybody",nikkiText}
             };
             string url = "https://api.schnetworks.net/v1/diary.php?type=post";
-            HttpResponseMessage resp = await client.PostAsync(url, new FormUrlEncodedContent(vds)).ConfigureAwait(false);
-            AccountService.OtherAccountRoot js_l = JsonConvert.DeserializeObject<AccountService.OtherAccountRoot>(resp.Content.ReadAsStringAsync().Result);
+            HttpResponseMessage resp = await client.PostAsync(url, 
+                new FormUrlEncodedContent(vds)).ConfigureAwait(false);
+            AccountService.OtherAccountRoot js_l = 
+            JsonConvert.DeserializeObject<AccountService.OtherAccountRoot>(resp.Content.ReadAsStringAsync().Result);
             if (js_l.RespInfo.Code >= 200 && js_l.RespInfo.Code < 300)
             {
                 message = "<p class='alert alert-success'>データの送信に成功しました！</p>";

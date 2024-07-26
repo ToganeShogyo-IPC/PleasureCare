@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <TargetFrameworks>net8.0-android;net8.0-maccatalyst</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+        <TargetFrameworks>net8.0-android;net8.0-maccatalyst;net8.0-ios</TargetFrameworks>
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
         <!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
 
@@ -63,6 +62,10 @@
       <ApplicationId>com.TGSH-IPC.PleasureCare</ApplicationId>
     </PropertyGroup>
 
+    <PropertyGroup>
+      <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+    </PropertyGroup>
+
     <ItemGroup>
         <!-- App Icon -->
         <MauiFont Include="wwwroot\css\bootstrap\fonts\bootstrap-icons.woff" />
@@ -99,6 +102,7 @@
 
     <ItemGroup>
         <PackageReference Include="ChartJs.Blazor" Version="1.1.0" />
+        <PackageReference Include="MeCab.DotNet" Version="1.2.0" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />

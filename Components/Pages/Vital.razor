@@ -1,5 +1,6 @@
 ﻿@page "/vital"
 @using PleasureCare.Data
+@using MeCab
 @inject NavigationManager NavigationManager
 
 <div style="@((MarkupString)sw_form)">
@@ -10,11 +11,11 @@
             <label class="input-group-text">cm</label>
         </div>
     </div>
-    
+
     <p>体重</p>
     <div class="row mb-3">
         <div class="input-group">
-            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重" @bind="weight"/>
+            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重" @bind="weight" />
             <label class="input-group-text">Kg</label>
         </div>
     </div>
@@ -70,7 +71,7 @@
     <p>歩数</p>
     <div class="row mb-3">
         <div class="input-group">
-            <input type="text" class="form-control form-control-lg" id="hosuuBox" placeholder="歩数" @bind="steps"/>
+            <input type="text" class="form-control form-control-lg" id="hosuuBox" placeholder="歩数" @bind="steps" />
             <label class="input-group-text">歩</label>
         </div>
     </div>
@@ -79,7 +80,7 @@
     <div class="row mb-3">
         <textarea class="form-control" id="syokuziBox" rows="3" placeholder="ここに食べたもの(料理名)を入力してください" @bind="eatgohan"></textarea>
     </div>
-    
+
 </div>
 @((MarkupString)message)
 
@@ -113,7 +114,7 @@
     string backbutton = "display: none";
 
     private readonly HttpClient client = new HttpClient();
-    
+
     [CascadingParameter]
     private ShareValues? ShareValues { get; set; }
 
@@ -141,6 +142,7 @@
                 sw_form = "display: none";
                 backbutton = "";
             }
+
         }
         await InvokeAsync(StateHasChanged);
     }

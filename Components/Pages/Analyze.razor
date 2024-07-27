@@ -21,9 +21,9 @@
                 <canvas id="SuiminChart"></canvas>
                 <p>日々の歩数の推移</p>
                 <canvas id="HosuuChart"></canvas>
-                
             </div>
         </div>
+        <p>最新のBMI値: @bmi</p>
     </div>
     <div class="tab-pane fade" id="ToshoraderChart-container" role="tabpanel" aria-labelledby="ToshoraderChart-tab">
         <div class="chart-container">
@@ -41,30 +41,58 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    
-    function receveJsonInta(json){ 
+    window.DataRecever = {
+        intake: function (json2) {
+            jsonData2 = JSON.parse(json2);
+            var points = [];
+            var lastresults;
+            var lastResult = [0,0,0,0,0,0];
+            var pointslabels = [];
 
-    }
-
-    function receveJsonVit(json){
-        var jsonData = JSON.parse(json);
-        var sleep = [];
-        var eiyo = [];
-        var eiyos;
-        var hosuulab = [];
-        var hosuudata = [];
-        console.debug(json);
-        jsonData.DataBody.forEach((value) => { 
-            sleep.push({ sleep: moment(value.gotobed), wake: moment(value.wakeup) });
-            eiyos = JSON.parse(value.eatgohan);
-            eiyo = [(eiyos.たんぱく質) / 55 > 1.2 ? 1.2 : (eiyos.たんぱく質) / 55, (eiyos.食物繊維総量) / 18.5 > 1.2 ? 1.2 : (eiyos.食物繊維総量) / 18.5, (eiyos.ビタミンB6) / 1.25 > 1.2 ? 1.2 : (eiyos.ビタミンB6) / 1.25, (eiyos.ビタミンB12) / 2.4 > 1.2 ? 1.2 : (eiyos.ビタミンB12) / 2.4, (eiyos.鉄) / 7 > 1.2 ? 1.2 : (eiyos.鉄) / 7, (eiyos.亜鉛) / 9 > 1.2 ? 1.2 : (eiyos.亜鉛) / 9, (eiyos.カルシウム) / 650 > 1.2 ? 1.2 : (eiyos.カルシウム) / 650, (eiyos.食塩相当量) / 6.5 > 1.2 ? 1.2 : (eiyos.食塩相当量) / 6.5];
-            hosuulab.push(moment(value.receptiondate).format("MM月DD日"));
-            hosuudata.push(parseInt(value.steps));
-        });
-        renderSuiminTimeChart(sleep.reverse());
-        renderEiyoChart(eiyo);
-        renderHosuuChart(hosuulab.reverse(), hosuudata.reverse());
-        drawgraphs();
+            jsonData2.DataBody.forEach((value2) => {
+                points.push(value2.total);
+                pointslabels.push(moment(value2.intakedate).format("MM月DD日"));
+                lastresults = JSON.parse(value2.ansbody);
+                lastResult = [0, 0, 0, 0, 0, 0];
+                lastresults.forEach((value3) => {
+                    if (value3.qNum === 1 || value3.qNum === 2) {
+                        lastResult[0] += value3.score;
+                    } else if (value3.qNum === 3) { 
+                        lastResult[1] += value3.score;
+                    } else if(value3.qNum === 4 || value3.qNum === 5 || value3.qNum === 6){
+                        lastResult[2] += value3.score;
+                    } else if(value3.qNum === 7){
+                        lastResult[3] += value3.score;
+                    } else if (value3.qNum === 8) {
+                        lastResult[4] += value3.score;
+                    } else if (value3.qNum === 9) {
+                        lastResult[5] += value3.score;
+                    }
+                });
+            });
+            lastResult = [lastResult[0] / 4, lastResult[1] / 3, lastResult[2] / 3, lastResult[3], lastResult[4] / 3, lastResult[5] / 5];
+            renderToshoraderChart(lastResult);
+            renderTosholineChart(pointslabels, points);
+        },
+        vital: function (json){
+            var jsonData = JSON.parse(json);
+            var sleep = [];
+            var eiyo = [];
+            var eiyos;
+            var hosuulab = [];
+            var hosuudata = [];
+            jsonData.DataBody.forEach((value) => { 
+                sleep.push({ sleep: moment(value.gotobed), wake: moment(value.wakeup) });
+                eiyos = JSON.parse(value.eatgohan);
+                eiyo = [(eiyos.たんぱく質) / 55 > 1.2 ? 1.2 : (eiyos.たんぱく質) / 55, (eiyos.食物繊維総量) / 18.5 > 1.2 ? 1.2 : (eiyos.食物繊維総量) / 18.5, (eiyos.ビタミンB6) / 1.25 > 1.2 ? 1.2 : (eiyos.ビタミンB6) / 1.25, (eiyos.ビタミンB12) / 2.4 > 1.2 ? 1.2 : (eiyos.ビタミンB12) / 2.4, (eiyos.鉄) / 7 > 1.2 ? 1.2 : (eiyos.鉄) / 7, (eiyos.亜鉛) / 9 > 1.2 ? 1.2 : (eiyos.亜鉛) / 9, (eiyos.カルシウム) / 650 > 1.2 ? 1.2 : (eiyos.カルシウム) / 650, (eiyos.食塩相当量) / 6.5 > 1.2 ? 1.2 : (eiyos.食塩相当量) / 6.5];
+                hosuulab.push(moment(value.receptiondate).format("MM月DD日"));
+                hosuudata.push(parseInt(value.steps));
+            });
+            renderSuiminTimeChart(sleep.reverse());
+            renderEiyoChart(eiyo);
+            renderHosuuChart(hosuulab.reverse(), hosuudata.reverse());
+            drawgraphs();
+        }
     }
     
     function drawgraphs(){
@@ -159,7 +187,6 @@
         };
 
         renderChart(config,"SuiminChart");
-        console.debug(data);
     }
 
     function renderEiyoChart(eiyoData) {
@@ -206,13 +233,13 @@
             , "eiyoChart");
     }
 
-    function renderTosholineChart() {
+    function renderTosholineChart(label,datas) {
         
         const data = {
-            labels: ["４月","５月","６月","７月","８月","９月"],
+            labels: label,
             datasets:[{
                 label: '点数の推移',
-                data: [18,15,16,14,19,20],
+                data: datas,
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1,
@@ -235,17 +262,16 @@
         renderChart(config,"TosholineChart");
     }
 
-    function renderToshoraderChart() {
+    function renderToshoraderChart(data) {
         renderChart(
             {
                 type: "radar",
                 data: {
                     labels: ["日時の見当識","単語の記銘","計算","数字の逆唱","言葉の遅延再生","言葉の流暢性"],
-                        // ÷４　÷3　÷3　÷１　÷3　÷5
                     datasets: [
                         {
                             label: "",
-                            data: [1,1,0.67,1,0.67,0.6],
+                            data: data,
                             backgroundColor: [
                                 "rgba(255, 99, 132, 0.2)"
                             ],
@@ -283,17 +309,70 @@
     [CascadingParameter]
     private ShareValues? ShareValues { get; set; }
     private readonly HttpClient client = new HttpClient();
-
+    public string bmi;
+    public double bmiint = 0;
     protected override async Task OnInitializedAsync()
     {
         string url = $"https://api.schnetworks.net/v1/vital-info.php?uuid={ShareValues.value.uuid}";
         string json = await client.GetStringAsync(url);
+        var js = JsonConvert.DeserializeObject<vitalDataRoot>(json);
+        double tall = (double)js.DataBody[0].tall / 100;
+        bmiint = Math.Round((js.DataBody[0].weight / tall / tall),2);
+        switch (bmiint)
+        {
+            case < 16:
+                bmi = $"{bmiint} やせすぎ";
+                break;
+            case < 16.99:
+                bmi = $"{bmiint} やせ";
+                break;
+            case < 18.49:
+                bmi = $"{bmiint} やせぎみ";
+                break;
+            case < 24.99:
+                bmi = $"{bmiint} 普通体重";
+                break;
+            case < 29.99:
+                bmi = $"{bmiint} 太りぎみ";
+                break;
+            case < 34.99:
+                bmi = $"{bmiint} 肥満1度";
+                break;
+            case < 39.99:
+                bmi = $"{bmiint} 肥満2度";
+                break;
+            case > 40:
+                bmi = $"{bmiint} 肥満3度";
+                break;
+            default:
+                bmi = "計算失敗";
+                break;
+        }
 
         string url2 = $"https://api.schnetworks.net/v1/intake-res.php?uuid={ShareValues.value.uuid}";
-        string json2 = await client.GetStringAsync(url);
+        string json2 = await client.GetStringAsync(url2);
 
-        await JSRuntime.InvokeVoidAsync("receveJsonVit", json);
-        await JSRuntime.InvokeVoidAsync("receveJsonInta", json2);
+        await JSRuntime.InvokeVoidAsync("DataRecever.vital", json);
+        await JSRuntime.InvokeVoidAsync("DataRecever.intake", json2);
     }
+
+    public class DataBody
+    {
+        public string vuid { get; set; }
+        public int weight { get; set; }
+        public string wakeup { get; set; }
+        public string gotobed { get; set; }
+        public int steps { get; set; }
+        public int tall { get; set; }
+        public string eatgohan { get; set; }
+        public string receptiondate { get; set; }
+    }
+
+    public class vitalDataRoot
+    {
+        public List<DataBody> DataBody { get; set; }
+        public AccountService.RespInfo RespInfo { get; set; }
+    }
+
 
 }

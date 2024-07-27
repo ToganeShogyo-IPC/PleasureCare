@@ -28,10 +28,20 @@
     <script src="lib/momentjs/moment.min.js"></script>
     <script src="lib/Chartjs/Chart.min.js"></script>
     <script>
-        function renderChart(chartJson, renderCanvas) {
-            var ctx = document.getElementById(renderCanvas);
-            window.chartObj = new Chart(ctx, chartJson);
-        };
+        let charts = {}; // 既存のチャートを保持するためのオブジェクト
+
+        function renderChart(config, canvasId) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+
+            // 既存のチャートがある場合は破棄
+            if (charts[canvasId]) {
+                charts[canvasId].destroy();
+            }
+
+            // 新しいチャートを作成し、保持
+            charts[canvasId] = new Chart(ctx, config);
+        }
+
     </script>
 
 </body>

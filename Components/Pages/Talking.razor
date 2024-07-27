@@ -1,6 +1,7 @@
 ﻿@page "/talking"
 @using PleasureCare.Data
 @inject NavigationManager NavigationManager
+@using MeCab
 <h1>@topMsg</h1>
 
 <div class="row">
@@ -49,6 +50,41 @@
     public async void SpeakText() =>
         await TextToSpeech.Default.SpeakAsync(questions.question[nowans-1].voicealt);
 
+    private async Task<int> ExtYasai(string? yasais)
+    {
+        int re = 0;
+        List<APIRef.DataBody> respdatat = new List<APIRef.DataBody>();
+        var tagger = MeCabTagger.Create();
+        foreach (var node in tagger.ParseToNodes(yasais)) //抽出された単語でforeach
+        {
+            if (0 < node.CharType) //おまじない
+            {
+                if ((node.Feature).Contains("名詞")) //出てきた単語が名詞なら
+                {
+                    APIRef.FoodsAPI js = new APIRef.FoodsAPI();
+                    try
+                    {
+                        var res = await Client.GetStringAsync($"http://api.schnetworks.net/v1/searchfoods.php?name={node.Surface}").ConfigureAwait(false);
+                        js = JsonConvert.DeserializeObject<APIRef.FoodsAPI>(res);
+                    }
+                    catch
+                    {
+                        js = new APIRef.FoodsAPI() { RespInfo = new AccountService.RespInfo() { Code = 404 } };
+                    }
+                    if (js.RespInfo.Code == 404) //見つからなかった
+                    {
+                        continue; //つづく
+                    }
+                    else
+                    {
+                        re += 1;
+                    }
+                }
+            }
+        }
+        return re;
+    }
+
     public async void putbutton()
     {
         switchDisp4 = (MarkupString)"";
@@ -76,6 +112,10 @@
                 {
                     nowans = nowans + (6 - nowans);
                 }
+            }
+            if(nowans == 9)
+            {
+                inscore = ExtYasai(ans).Result;
             }
             qAnswers.Add(new ansResp()
                 {

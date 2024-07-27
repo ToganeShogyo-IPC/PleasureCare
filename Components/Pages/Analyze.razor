@@ -1,57 +1,116 @@
 ﻿@page "/analyze"
+@using PleasureCare.Data
+@inject IJSRuntime JSRuntime
 
-<button class="btn btn-primary btn-sm py-0" onclick="renderChartTest()">Click me</button>
-
-<h4>栄養素分析</h4>
-<div class="row">
-    <div class="col-12">
-        <p>50g, 1.4mg, 2.3mg, 5mg, 18g, 10mg, 750mg</p>
-        <div class="chart-container" style="position:relative; max-width: 800px">
-            <canvas id="eiyoChart"></canvas>
+<p>分析結果</p>
+<ul class="nav nav-tabs" id="chartTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="ToshoraderChart-tab" data-bs-toggle="tab" data-bs-target="#ToshoraderChart-container" type="button" role="tab" aria-controls="ToshoraderChart-container" aria-selected="false">東商式スケール分析</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="TosholineChart-tab" data-bs-toggle="tab" data-bs-target="#TosholineChart-container" type="button" role="tab" aria-controls="TosholineChart-container" aria-selected="true">健康観察分析</button>
+    </li>
+</ul>
+<div class="tab-content" id="chartTabsContent">
+    <div class="tab-pane fade show active" id="TosholineChart-container" role="tabpanel" aria-labelledby="TosholineChart-tab">
+        <div class="chart-container">
+            <div style="width: 300px;">
+                <p>不足しがちな栄養素の推定必要摂取量と推定摂取量の比率</p>
+                <canvas id="eiyoChart"></canvas>
+                <p>日々の睡眠時間の推移</p>
+                <canvas id="SuiminChart"></canvas>
+                <p>日々の歩数の推移</p>
+                <canvas id="HosuuChart"></canvas>
+            </div>
+        </div>
+        <p>最新のBMI値: @bmi</p>
+    </div>
+    <div class="tab-pane fade" id="ToshoraderChart-container" role="tabpanel" aria-labelledby="ToshoraderChart-tab">
+        <div class="chart-container">
+            <div style="width: 300px;">
+                <h6>東商式スケール</h6>
+                <p>分野ごとの満点との比率</p>
+                <canvas id="ToshoraderChart"></canvas>
+                <p>点数の推移</p>
+                <canvas id="TosholineChart"></canvas>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <p>浮動棒グラフ</p>
-        <div class="chart-container" style="position:relative; max-width: 500px">
-            <canvas id="SuiminChart"></canvas>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-12">
-        <p>歩数グラフ</p>
-        <div class="chart-container" style="position:relative; max-width: 500px">
-            <canvas id="HosuuChart"></canvas>
-        </div>
-    </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    renderHosuuChart();
-    renderSuiminTimeChart();
-    renderEiyoChart();
+    window.DataRecever = {
+        intake: function (json2) {
+            jsonData2 = JSON.parse(json2);
+            var points = [];
+            var lastresults;
+            var lastResult = [0,0,0,0,0,0];
+            var pointslabels = [];
 
-    function renderHosuuChart() {
+            jsonData2.DataBody.forEach((value2) => {
+                points.push(value2.total);
+                pointslabels.push(moment(value2.intakedate).format("MM月DD日"));
+                lastresults = JSON.parse(value2.ansbody);
+                lastResult = [0, 0, 0, 0, 0, 0];
+                lastresults.forEach((value3) => {
+                    if (value3.qNum === 1 || value3.qNum === 2) {
+                        lastResult[0] += value3.score;
+                    } else if (value3.qNum === 3) { 
+                        lastResult[1] += value3.score;
+                    } else if(value3.qNum === 4 || value3.qNum === 5 || value3.qNum === 6){
+                        lastResult[2] += value3.score;
+                    } else if(value3.qNum === 7){
+                        lastResult[3] += value3.score;
+                    } else if (value3.qNum === 8) {
+                        lastResult[4] += value3.score;
+                    } else if (value3.qNum === 9) {
+                        lastResult[5] += value3.score;
+                    }
+                });
+            });
+            lastResult = [lastResult[0] / 4, lastResult[1] / 3, lastResult[2] / 3, lastResult[3], lastResult[4] / 3, lastResult[5] / 5];
+            renderToshoraderChart(lastResult);
+            renderTosholineChart(pointslabels, points);
+        },
+        vital: function (json){
+            var jsonData = JSON.parse(json);
+            var sleep = [];
+            var eiyo = [];
+            var eiyos;
+            var hosuulab = [];
+            var hosuudata = [];
+            jsonData.DataBody.forEach((value) => { 
+                sleep.push({ sleep: moment(value.gotobed), wake: moment(value.wakeup) });
+                eiyos = JSON.parse(value.eatgohan);
+                eiyo = [(eiyos.たんぱく質) / 55 > 1.2 ? 1.2 : (eiyos.たんぱく質) / 55, (eiyos.食物繊維総量) / 18.5 > 1.2 ? 1.2 : (eiyos.食物繊維総量) / 18.5, (eiyos.ビタミンB6) / 1.25 > 1.2 ? 1.2 : (eiyos.ビタミンB6) / 1.25, (eiyos.ビタミンB12) / 2.4 > 1.2 ? 1.2 : (eiyos.ビタミンB12) / 2.4, (eiyos.鉄) / 7 > 1.2 ? 1.2 : (eiyos.鉄) / 7, (eiyos.亜鉛) / 9 > 1.2 ? 1.2 : (eiyos.亜鉛) / 9, (eiyos.カルシウム) / 650 > 1.2 ? 1.2 : (eiyos.カルシウム) / 650, (eiyos.食塩相当量) / 6.5 > 1.2 ? 1.2 : (eiyos.食塩相当量) / 6.5];
+                hosuulab.push(moment(value.receptiondate).format("MM月DD日"));
+                hosuudata.push(parseInt(value.steps));
+            });
+            renderSuiminTimeChart(sleep.reverse());
+            renderEiyoChart(eiyo);
+            renderHosuuChart(hosuulab.reverse(), hosuudata.reverse());
+            drawgraphs();
+        }
+    }
+    
+    function drawgraphs(){
+        renderTosholineChart();
+        renderToshoraderChart();
+    }
+    
+    function renderHosuuChart(label,data) {
         renderChart(
             {
                 type: "bar",
                 data: {
-                    labels: ["7/1","7/2","7/3","7/4","7/5","7/6"],
+                    labels: label,
                     datasets: [
                         {
-                            label: "歩数",
-                            data: [1,2,3,4,5,6],
+                            label:"",
+                            data: data,
                             backgroundColor: [
-                                "rgba(54, 162, 235, 0.9)",
-                                "rgba(54, 162, 235, 0.9)",
-                                "rgba(54, 162, 235, 0.9)",
-                                "rgba(54, 162, 235, 0.9)",
-                                "rgba(54, 162, 235, 0.9)",
                                 "rgba(54, 162, 235, 0.9)"
                             ],
                             borderWidth: 1
@@ -59,113 +118,261 @@
                     ]
                 },
                 options: {
+                    plugins: {
+                    legend: {
+                        display:false
+                    },
+                    title: {
+                        display:false
+                        }
+                    },
                     scales: {
                         yAxes: [{
                             ticks: {
                                 min: 0, // 最小値
-                                max: 20, // 最大値
-                                stepSize: 1 // メモリの間隔
                             }
                         }]
                     }
                 }
-            }
+        }
             , "HosuuChart");
     }
-
-    var sleepData = [
-            { sleep: moment('2024-08-01T23:00:00'), wake: moment('2024-08-02T07:00:00') },
-            { sleep: moment('2024-08-02T23:30:00'), wake: moment('2024-08-03T06:30:00') },
-            { sleep: moment('2024-08-03T23:00:00'), wake: moment('2024-08-04T07:00:00') },
-        ];
-
-    function renderSuiminTimeChart() {
-        var sleepData = [
-            { sleep: moment('2024-08-01T23:00:00'), wake: moment('2024-08-02T07:00:00') },
-            { sleep: moment('2024-08-02T23:30:00'), wake: moment('2024-08-03T06:30:00') },
-            { sleep: moment('2024-08-03T23:00:00'), wake: moment('2024-08-04T07:00:00') },
-            // 他の日付のデータ...
-        ];
-var chartData = sleepData.map(function (item, index) {
+    
+    function renderSuiminTimeChart(sleepData) {
+    
+        var chartData = sleepData.map(function (item, index) {
             return {
-                x: `Day ${index + 1}`,
+                x: item.wake.format("MM月DD日"),
                 y: item.sleep.valueOf(),
                 y2: item.wake.valueOf()
             };
         });
-const ctx = document.getElementById('myChart').getContext('2d');
-const data = {
-  labels: chartData.map(item => item.x),
-  datasets:[{
-                    label: '睡眠時間',
-                    data: chartData.map(item => ({
-                        x: (item.y2 - item.y) / (1000 * 60 * 60),  // ミリ秒を時間に変換
-                        y: item.x
-                    })),
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-};
+        const data = {
+            labels: chartData.map(item => item.x),
+            datasets:[{
+                label: '睡眠時間',
+                data: chartData.map(item => 
+                    (item.y2 - item.y) / (1000 * 60 * 60)  // ミリ秒を時間に変換
+                ),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill:true
+            }]
+        };
+    
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                    title: {
+                        display: false,
+                    },
+                },
+                scales:{
+                    y:{
+                        min:0,
+                        max:12,
+                        ticks:{
+                            stepSize:2
+                        }
+                    }
+                }
+            },
+        };
 
-const config = {
-  type: 'line',
-  data: data,
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Chart.js Line Chart'
-      }
+        renderChart(config,"SuiminChart");
     }
-  },
-};
 
-renderChart(config,"SuiminChart");
-    }
-
-    function renderEiyoChart() {
+    function renderEiyoChart(eiyoData) {
         renderChart(
            {
                 type: "radar",
                 data: {
-                    labels: ["タンパク質", "食物繊維", "ビタミンB6", "ビタミンB12", "鉄分", "亜鉛"],
+                    labels: ["タンパク質", "食物繊維", "ビタミンB6", "ビタミンB12", "鉄分", "亜鉛","カルシウム","塩分"],
+                        // ÷55 ÷18.5 ÷1.25 ÷2.4 ÷7 ÷9 ÷650 ÷6.5
                     datasets: [
                         {
                             label: "推定必要栄養素",
-                            data: [1,1,1,1,1,1],
+                            data: [1,1,1,1,1,1,1,1],
                             backgroundColor: [
-                                "rgba(255, 99, 132, 0.2)",
-                                "rgba(54, 162, 235, 0.2)",
-                                "rgba(255, 206, 86, 0.2)",
-                                "rgba(75, 192, 192, 0.2)",
-                                "rgba(153, 102, 255, 0.2)",
-                                "rgba(255, 159, 64, 0.2)"
+                                "rgba(0, 0, 0, 0)"
                             ],
                             borderColor: [
-                                "rgba(255, 99, 132, 1)",
-                                "rgba(54, 162, 235, 1)",
-                                "rgba(255, 206, 86, 1)",
-                                "rgba(75, 192, 192, 1)",
-                                "rgba(153, 102, 255, 1)",
-                                "rgba(255, 159, 64, 1)"
+                                "rgba(255, 99, 132, 0.7)"
+                            ],
+                            borderWidth: 1
+                        },
+                        {
+                            label: "あなたの推定摂取栄養素",
+                            data: eiyoData,
+                            backgroundColor: [
+                                "rgba(54, 162, 235, 0.2)"
+                            ],
+                            borderColor: [
+                                "rgba(54, 162, 235, 1)"
                             ],
                             borderWidth: 1
                         }
                     ]
                 },
                 options: {
+                    scales:{
+                        r:{
+                            min:0,
+                            max:1.2,
+                        }
+                    },
                 }
             }
             , "eiyoChart");
     }
 
+    function renderTosholineChart(label,datas) {
+        
+        const data = {
+            labels: label,
+            datasets:[{
+                label: '点数の推移',
+                data: datas,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+            }]
+        };
+
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                scales:{
+                    y:{
+                        max:21,
+                    }
+                }
+            },
+        };
+
+        renderChart(config,"TosholineChart");
+    }
+
+    function renderToshoraderChart(data) {
+        renderChart(
+            {
+                type: "radar",
+                data: {
+                    labels: ["日時の見当識","単語の記銘","計算","数字の逆唱","言葉の遅延再生","言葉の流暢性"],
+                    datasets: [
+                        {
+                            label: "",
+                            data: data,
+                            backgroundColor: [
+                                "rgba(255, 99, 132, 0.2)"
+                            ],
+                            borderColor: [
+                                "rgba(255, 99, 132, 0.8)"
+                            ],
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        title: {
+                            display: false,
+                        },
+                    },
+                    scales:{
+                        r:{
+                            min:0,
+                            max:1
+                        }
+                    }
+                }
+            }
+            , "ToshoraderChart");
+    }
+    
+
 </script>
 
 @code {
+    [CascadingParameter]
+    private ShareValues? ShareValues { get; set; }
+    private readonly HttpClient client = new HttpClient();
+    public string bmi;
+    public double bmiint = 0;
+    protected override async Task OnInitializedAsync()
+    {
+        string url = $"https://api.schnetworks.net/v1/vital-info.php?uuid={ShareValues.value.uuid}";
+        string json = await client.GetStringAsync(url);
+        var js = JsonConvert.DeserializeObject<vitalDataRoot>(json);
+        double tall = (double)js.DataBody[0].tall / 100;
+        bmiint = Math.Round((js.DataBody[0].weight / tall / tall),2);
+        switch (bmiint)
+        {
+            case < 16:
+                bmi = $"{bmiint} やせすぎ";
+                break;
+            case < 16.99:
+                bmi = $"{bmiint} やせ";
+                break;
+            case < 18.49:
+                bmi = $"{bmiint} やせぎみ";
+                break;
+            case < 24.99:
+                bmi = $"{bmiint} 普通体重";
+                break;
+            case < 29.99:
+                bmi = $"{bmiint} 太りぎみ";
+                break;
+            case < 34.99:
+                bmi = $"{bmiint} 肥満1度";
+                break;
+            case < 39.99:
+                bmi = $"{bmiint} 肥満2度";
+                break;
+            case > 40:
+                bmi = $"{bmiint} 肥満3度";
+                break;
+            default:
+                bmi = "計算失敗";
+                break;
+        }
+
+        string url2 = $"https://api.schnetworks.net/v1/intake-res.php?uuid={ShareValues.value.uuid}";
+        string json2 = await client.GetStringAsync(url2);
+
+        await JSRuntime.InvokeVoidAsync("DataRecever.vital", json);
+        await JSRuntime.InvokeVoidAsync("DataRecever.intake", json2);
+    }
+
+    public class DataBody
+    {
+        public string vuid { get; set; }
+        public int weight { get; set; }
+        public string wakeup { get; set; }
+        public string gotobed { get; set; }
+        public int steps { get; set; }
+        public int tall { get; set; }
+        public string eatgohan { get; set; }
+        public string receptiondate { get; set; }
+    }
+
+    public class vitalDataRoot
+    {
+        public List<DataBody> DataBody { get; set; }
+        public AccountService.RespInfo RespInfo { get; set; }
+    }
+
 
 }

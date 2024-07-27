@@ -1,20 +1,113 @@
 ﻿@page "/Diary"
-
+@using PleasureCare.Data
 <div class="container mt-5">
-    <h2>@nanika</h2>
+    <h2>@nanika</h2><p>最終更新: @lastup</p>
     <form>
         <div class="form-group">
-            <textarea class="form-control" id="longTextInput" rows="10" placeholder="ここに日記を入力してください"></textarea>
+            <textarea class="form-control" id="longTextInput" rows="10" placeholder="ここに日記を入力してください" @bind="nikkiText"></textarea>
         </div>
         <div class="row mt-5">
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn link-light col-4" style="background-color: #005d64">送信</button>
+                <button type="button" class="btn link-light col-4" style="background-color: #005d64" @onclick=senddiary>送信</button>
             </div>
         </div>
-        
+        <div class="row mt-3">
+            @((MarkupString)message)
+        </div>
     </form>
 </div>
 
 @code {
+    [CascadingParameter]
+    private ShareValues? ShareValues { get; set; }
+
+    string nikkiText;
+    string message;
+    bool is_hakkaEvent = true;
     public string nanika = DateTime.Now.ToString("M月dd日の日記");
+    public string lastup;
+    private readonly HttpClient client = new HttpClient();
+
+    public class DataBody
+    {
+        public string uuid { get; set; }
+        public string diarybody { get; set; }
+        public string lastupdate { get; set; }
+    }
+
+    public class DiaryDataRoot
+    {
+        public List<DataBody> DataBody { get; set; }
+        public AccountService.RespInfo RespInfo { get; set; }
+    }
+
+    public async void senddiary()
+    {
+        try
+        {
+            is_hakkaEvent = false;
+            Dictionary<string, string> vds = new Dictionary<string, string>()
+            {
+                {"uuid",ShareValues.value.uuid},
+                {"diarybody",nikkiText}
+            };
+            string url = "https://api.schnetworks.net/v1/diary.php?type=post";
+            HttpResponseMessage resp = await client.PostAsync(url, 
+                new FormUrlEncodedContent(vds)).ConfigureAwait(false);
+            AccountService.OtherAccountRoot js_l = 
+            JsonConvert.DeserializeObject<AccountService.OtherAccountRoot>(resp.Content.ReadAsStringAsync().Result);
+            if (js_l.RespInfo.Code >= 200 && js_l.RespInfo.Code < 300)
+            {
+                message = "<p class='alert alert-success'>データの送信に成功しました！</p>";
+                InvokeAsync(StateHasChanged);
+                return;
+            }
+            else
+            {
+                url = "https://api.schnetworks.net/v1/diary.php?type=put";
+                resp = await client.PostAsync(url, new FormUrlEncodedContent(vds)).ConfigureAwait(false);
+                js_l = JsonConvert.DeserializeObject<AccountService.OtherAccountRoot>(resp.Content.ReadAsStringAsync().Result);
+                if (js_l.RespInfo.Code >= 200 && js_l.RespInfo.Code < 300)
+                {
+                    message = "<p class='alert alert-success'>データの送信に成功しました！</p>";
+                    InvokeAsync(StateHasChanged);
+                    return;
+                }
+            }
+        }
+        catch
+        {
+            return;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        try
+        {
+            if(!is_hakkaEvent){ return; }
+            if (firstRender)
+            {
+                string url = $"https://api.schnetworks.net/v1/diary.php?uuid={ShareValues.value.uuid}";
+                HttpResponseMessage resp = await client.GetAsync(url);
+                DiaryDataRoot js_l = JsonConvert.DeserializeObject<DiaryDataRoot>(resp.Content.ReadAsStringAsync().Result);
+                if (js_l.RespInfo.Code >= 200 && js_l.RespInfo.Code < 300)
+                {
+                    if ((DateTime.Now - (DateTime.Parse(js_l.DataBody[0].lastupdate))).TotalDays > 2)
+                    {
+                        nikkiText = "";
+                    }
+                    else
+                    {
+                        nikkiText = js_l.DataBody[0].diarybody;
+                        lastup = DateTime.Parse(js_l.DataBody[0].lastupdate).ToString("yyyy年MM月dd日");
+                        StateHasChanged();
+                    }
+                }
+            }
+        }
+        catch
+        {
+            nikkiText = "";
+        }
+    }
 }

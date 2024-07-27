@@ -1,14 +1,9 @@
 ﻿@page "/vital"
 @using PleasureCare.Data
+@using MeCab
 @inject NavigationManager NavigationManager
+@using System.Linq
 
-<!-----
-    初回だけ
-    身長
------>
-<!-----
-    頻度低い
------>
 <div style="@((MarkupString)sw_form)">
     <p>身長</p>
     <div class="row mb-3">
@@ -17,15 +12,14 @@
             <label class="input-group-text">cm</label>
         </div>
     </div>
-    
+
     <p>体重</p>
     <div class="row mb-3">
         <div class="input-group">
-            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重" @bind="weight"/>
+            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重" @bind="weight" />
             <label class="input-group-text">Kg</label>
         </div>
     </div>
-
     <!-----
         毎朝記録するやつ
     ----->
@@ -72,17 +66,24 @@
             <label class="input-group-text">分</label>
         </div>
     </div>
-
     <!-----
         毎晩記録するやつ
     ----->
     <p>歩数</p>
     <div class="row mb-3">
         <div class="input-group">
-            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="歩数" @bind="steps"/>
+            <input type="text" class="form-control form-control-lg" id="hosuuBox" placeholder="歩数" @bind="steps" />
             <label class="input-group-text">歩</label>
         </div>
     </div>
+
+    <p>食事内容</p>
+    <div class="row mb-3">
+        <div class="input-group">
+            <textarea class="form-control" id="syokuziBox" rows="3" placeholder="ここに食べたもの(料理名)を入力してください" @bind="eatgohan"></textarea>
+        </div>
+    </div>
+
 </div>
 @((MarkupString)message)
 
@@ -112,11 +113,95 @@
     string gotobedm;
     string message;
     string sw_form;
+    string eatgohan;
     string backbutton = "display: none";
 
     private readonly HttpClient client = new HttpClient();
+
     [CascadingParameter]
     private ShareValues? ShareValues { get; set; }
+
+    private async Task<string> ExtGohan(string? eatgohans)
+    {
+        APIRef.DataBody respdata = new APIRef.DataBody();
+        List<APIRef.DataBody> respdatat = new List<APIRef.DataBody>();
+        var tagger = MeCabTagger.Create();
+        foreach(var node in tagger.ParseToNodes(eatgohans)) //抽出された単語でforeach
+        {
+            if(0 < node.CharType) //おまじない
+            {
+                if ((node.Feature).Contains("名詞")) //出てきた単語が名詞なら
+                {
+                    APIRef.FoodsAPI js = new APIRef.FoodsAPI();
+                    try
+                    {
+                        var res = await client.GetStringAsync($"http://api.schnetworks.net/v1/searchfoods.php?name={node.Surface}").ConfigureAwait(false);
+                        js = JsonConvert.DeserializeObject<APIRef.FoodsAPI>(res);
+                    }
+                    catch
+                    {
+                        js = new APIRef.FoodsAPI() { RespInfo = new AccountService.RespInfo() { Code = 404 } };
+                    }
+                    if(js.RespInfo.Code == 404) //見つからなかった
+                    {
+                        continue; //つづく
+                    }
+                    else
+                    {
+                        respdatat.Add(new APIRef.DataBody()
+                        {
+                                foodName = node.Surface,
+                                protain = js.DataBody.Average(el => el.protain),
+                                shokumotsusenni = js.DataBody.Average(el => el.shokumotsusenni),
+                                vitaminBs = js.DataBody.Average(el => el.vitaminBs),
+                                vitaminBtwe = js.DataBody.Average(el => el.vitaminBtwe),
+                                iron = js.DataBody.Average(el => el.iron),
+                                aen = js.DataBody.Average(el => el.aen),
+                                carushium = js.DataBody.Average(el => el.carushium),
+                                solt = js.DataBody.Average(el=>el.solt)
+                        });
+                    }
+                }
+            }
+        }
+        respdata = new APIRef.DataBody()
+        {
+            protain = Math.Floor(respdatat.Sum(el => el.protain)*100)/100,
+            shokumotsusenni = Math.Floor(respdatat.Sum(el => el.shokumotsusenni)*100)/100,
+            vitaminBs = Math.Floor(respdatat.Sum(el => el.vitaminBs)*100)/100,
+            vitaminBtwe = Math.Floor(respdatat.Sum(el => el.vitaminBtwe)*100)/100,
+            iron = Math.Floor(respdatat.Sum(el => el.iron)*100)/100,
+            aen = Math.Floor(respdatat.Sum(el => el.aen)*100)/100,
+            carushium = Math.Floor(respdatat.Sum(el => el.carushium)*100)/100,
+            solt = Math.Floor(respdatat.Sum(el => el.solt*100)/100)
+        };
+        return JsonConvert.SerializeObject(respdata);
+    }
+
+    public string jikokumaker(string type = "",string jikoku = "")
+    {
+        string resp = "1970/01/01 00:00:00";
+        DateTime intime = DateTime.Parse(jikoku);
+        if(intime.TimeOfDay >= DateTime.Now.TimeOfDay && type == "goto") //寝た時分が今の時分より遅い→昨日
+        {
+            resp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day - 1, intime.Hour, intime.Minute, intime.Second).ToString("yyyy/MM/dd HH:mm:ss");
+        }
+        else if (intime.TimeOfDay <= DateTime.Now.TimeOfDay && type == "goto") //寝た時分が今の時分より早い→今日
+        {
+            resp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, intime.Hour, intime.Minute, intime.Second).ToString("yyyy/MM/dd HH:mm:ss");
+        }
+
+        if (intime.TimeOfDay >= DateTime.Now.TimeOfDay && type == "wake") //起きた時分が今の時分より遅い→昨日
+        {
+            resp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day - 1, intime.Hour, intime.Minute, intime.Second).ToString("yyyy/MM/dd HH:mm:ss");
+        }
+        else if (intime.TimeOfDay <= DateTime.Now.TimeOfDay && type == "wake") //起きた時分が今の時分より早い→今日
+        {
+            resp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, intime.Hour, intime.Minute, intime.Second).ToString("yyyy/MM/dd HH:mm:ss");
+        }
+
+        return resp;
+    }
 
     private async void ResultSender() //送信
     {
@@ -126,8 +211,9 @@
             { "weight",weight},
             { "tall",tall},
             { "steps", steps},
-            { "gotobed",gotobedh + ":" + gotobedm},
-            { "wakeup",wakeuph + ":" + wakeupm},
+            { "gotobed",jikokumaker("goto",gotobedh + ":" + gotobedm)},
+            { "wakeup",jikokumaker("wake",wakeuph + ":" + wakeupm)},
+            { "eatgohan",ExtGohan(eatgohan).Result},
             {"senddate",DateTime.Now.ToString("yyyy-MM-dd")}
         };
         HttpResponseMessage resp = await client.PostAsync("https://api.schnetworks.net/v1/vital-info.php", new FormUrlEncodedContent(vds)).ConfigureAwait(false);
@@ -141,6 +227,7 @@
                 sw_form = "display: none";
                 backbutton = "";
             }
+
         }
         await InvokeAsync(StateHasChanged);
     }

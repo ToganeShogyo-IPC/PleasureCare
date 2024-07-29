@@ -1,0 +1,54 @@
+﻿@page "/Regist"
+@using PleasureCare.Data
+<h2>アカウント登録</h2>
+
+@((MarkupString)message)
+<div class="row mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control form-control-lg" id="mail" placeholder="メールアドレス" @bind="mail"/>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control form-control-lg" id="pass" placeholder="お名前" @bind="name"/>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="input-group">
+        <input type="password" class="form-control form-control-lg" id="pass" placeholder="パスワード" @bind="password"/>
+    </div>
+</div>
+
+<div class="row">
+    <input type="button" class ="btn btn-primary col-3" value="登録" @onclick="ClickedSubmit" />
+</div>
+
+@code {
+    string message;
+    string password;
+    string mail;
+    string name;
+    public async void ClickedSubmit()
+    {
+        AccountService.RegAccDataBody data = new AccountService.RegAccDataBody()
+        {
+            password = password,
+            name = name,
+            mail = mail
+        };
+        AccountService.RespInfo res = await AccountService.RegistAccount(data);
+        if (res.Code == 201)
+        {
+            message = "<p class='alert alert-success'>登録に成功しました！</p>";
+        }
+        if (res.Code == 409)
+        {
+            message = "<p class='alert alert-danger'>このメールアドレスは既に登録されています。</p>";
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+}

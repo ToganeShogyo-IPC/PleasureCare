@@ -69,7 +69,7 @@
     <ItemGroup>
         <!-- App Icon -->
         <MauiFont Include="wwwroot\css\bootstrap\fonts\bootstrap-icons.woff" />
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#00C1C8" />
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appicofg.svg" Color="#00C1C8" />
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#00C1C8" BaseSize="128,128" />
 
@@ -150,11 +150,6 @@
 
     <ItemGroup>
       <Folder Include="wwwroot\lib\momentjs\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <MauiIcon Include="Resources\AppIcon\appicon.svg" />
-      <MauiIcon Include="Resources\AppIcon\appiconfg.svg" />
     </ItemGroup>
 
 </Project>

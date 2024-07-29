@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Components;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace PleasureCare.Data
 {
@@ -25,10 +23,19 @@ namespace PleasureCare.Data
             public string mail { get; set; }
             public string pass { get; set; }
         }
-        
+
         public class AccountBody
         {
             public string authid { get; set; }
+        }
+        /// <summary>
+        /// アカウント登録時に送信するデータぬん
+        /// </summary>
+        public class RegAccDataBody()
+        {
+            public string? mail { get; set; }
+            public string? name { get; set; }
+            public string? password { get; set; }
         }
         
         /// <summary>
@@ -78,6 +85,63 @@ namespace PleasureCare.Data
         }
 
         private static readonly HttpClient client = new HttpClient();
+        /// <summary>
+        /// アカウント登録処理
+        /// </summary>
+        /// <param name="requestBody">登録時の情報</param>
+        public static async Task<RespInfo>? RegistAccount(RegAccDataBody requestBody = null)
+        {
+            string result;
+            if (requestBody != null)
+            {
+                Dictionary<string, string> requestBodyDatas = new Dictionary<string, string>()
+                {
+                    {"mail",requestBody.mail},
+                    {"name",requestBody.name},
+                    {"pass",requestBody.password}
+                };
+                HttpContent reqBody = new FormUrlEncodedContent(requestBodyDatas);
+                HttpResponseMessage resp = await client.PostAsync("https://api.schnetworks.net/v1/user.php", reqBody).ConfigureAwait(false);
+                string json = await resp.Content.ReadAsStringAsync();
+                var js_l = JsonConvert.DeserializeObject<AuthIDRoot>(json);
+                if ((int)resp.StatusCode == 403)
+                {
+                    RespInfo respInfo = new RespInfo()
+                    {
+                        Code = (int)resp.StatusCode,
+                    };
+                    return respInfo;
+                }
+                if ((int)resp.StatusCode == 404)
+                {
+                    RespInfo respInfo = new RespInfo()
+                    {
+                        Code = (int)resp.StatusCode,
+                    };
+                    return respInfo;
+                }
+                if((int)resp.StatusCode == 409)
+                {
+                    RespInfo respInfo = new RespInfo()
+                    {
+                        Code = (int)resp.StatusCode,
+                    };
+                    return respInfo;
+                }
+
+                if ((int)resp.StatusCode == 201)
+                {
+                    RespInfo respInfo = new RespInfo()
+                    {
+                        Code = (int)resp.StatusCode,
+                    };
+                    return respInfo;
+                }
+            }
+
+            return null;
+        }
+        
         /// <summary>
         /// アカウントログイン作業(起動時・通常ログイン時共通)
         /// 起動時だと認証ID生成の手順を吹っ飛ばして通常の認証に飛びまｓ。

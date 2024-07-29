@@ -2,6 +2,7 @@
 @using PleasureCare.Data
 @inject NavigationManager NavigationManager
 <h3>アカウント設定</h3>
+<p>現在ログイン中のアカウント: @usernames</p>
 <p>設定できる項目はありません。</p>
 <p>今後のアップデート等でもしかしたら実装するかもしれません</p>
 
@@ -9,6 +10,12 @@
 @code {
     [CascadingParameter]
     private ShareValues? ShareValues { get; set; }
+    string usernames = "";
+
+    protected override void OnInitialized()
+    {
+        usernames = $"{ShareValues.value.name}さん ({ShareValues.value.mail})";
+    }
 
     public void onclick_logout()
     {

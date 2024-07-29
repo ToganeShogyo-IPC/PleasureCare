@@ -70,7 +70,7 @@
                     }
                 });
             });
-            lastResult = [lastResult[0] / 4, lastResult[1] / 3, lastResult[2] / 3, lastResult[3], lastResult[4] / 3, lastResult[5] / 5];
+            lastResult = [lastResult[0] / 4, lastResult[1] / 3, lastResult[2] / 3, lastResult[3]/3, lastResult[4] / 3, lastResult[5] / 5];
             renderToshoraderChart(lastResult);
             renderTosholineChart(pointslabels, points);
         },
@@ -311,46 +311,64 @@
     private readonly HttpClient client = new HttpClient();
     public string bmi;
     public double bmiint = 0;
+    string json = "";
+    string json2 = "";
     protected override async Task OnInitializedAsync()
     {
-        string url = $"https://api.schnetworks.net/v1/vital-info.php?uuid={ShareValues.value.uuid}";
-        string json = await client.GetStringAsync(url);
-        var js = JsonConvert.DeserializeObject<vitalDataRoot>(json);
-        double tall = (double)js.DataBody[0].tall / 100;
-        bmiint = Math.Round((js.DataBody[0].weight / tall / tall),2);
-        switch (bmiint)
+        try
         {
-            case < 16:
-                bmi = $"{bmiint} やせすぎ";
-                break;
-            case < 16.99:
-                bmi = $"{bmiint} やせ";
-                break;
-            case < 18.49:
-                bmi = $"{bmiint} やせぎみ";
-                break;
-            case < 24.99:
-                bmi = $"{bmiint} 普通体重";
-                break;
-            case < 29.99:
-                bmi = $"{bmiint} 太りぎみ";
-                break;
-            case < 34.99:
-                bmi = $"{bmiint} 肥満1度";
-                break;
-            case < 39.99:
-                bmi = $"{bmiint} 肥満2度";
-                break;
-            case > 40:
-                bmi = $"{bmiint} 肥満3度";
-                break;
-            default:
-                bmi = "計算失敗";
-                break;
+            string url = $"https://api.schnetworks.net/v1/vital-info.php?uuid={ShareValues.value.uuid}";
+            json = await client.GetStringAsync(url);
+            var js = JsonConvert.DeserializeObject<vitalDataRoot>(json);
+            double tall = (double)js.DataBody[0].tall / 100;
+            bmiint = Math.Round((js.DataBody[0].weight / tall / tall), 2);
+            switch (bmiint)
+            {
+                case < 16:
+                    bmi = $"{bmiint} やせすぎ";
+                    break;
+                case < 16.99:
+                    bmi = $"{bmiint} やせ";
+                    break;
+                case < 18.49:
+                    bmi = $"{bmiint} やせぎみ";
+                    break;
+                case < 24.99:
+                    bmi = $"{bmiint} 普通体重";
+                    break;
+                case < 29.99:
+                    bmi = $"{bmiint} 太りぎみ";
+                    break;
+                case < 34.99:
+                    bmi = $"{bmiint} 肥満1度";
+                    break;
+                case < 39.99:
+                    bmi = $"{bmiint} 肥満2度";
+                    break;
+                case > 40:
+                    bmi = $"{bmiint} 肥満3度";
+                    break;
+                default:
+                    bmi = "計算失敗";
+                    break;
+            }
         }
-
-        string url2 = $"https://api.schnetworks.net/v1/intake-res.php?uuid={ShareValues.value.uuid}";
-        string json2 = await client.GetStringAsync(url2);
+        catch
+        {
+            vitalDataRoot vitalDataRoot = new vitalDataRoot()
+                {
+                    DataBody = new List<DataBody>()
+                };
+            json = JsonConvert.SerializeObject(vitalDataRoot);
+        }
+        try{
+            string url2 = $"https://api.schnetworks.net/v1/intake-res.php?uuid={ShareValues.value.uuid}";
+            json2 = await client.GetStringAsync(url2);
+        }
+        catch
+        {
+            json2 = "";
+        }
 
         await JSRuntime.InvokeVoidAsync("DataRecever.vital", json);
         await JSRuntime.InvokeVoidAsync("DataRecever.intake", json2);
@@ -358,14 +376,14 @@
 
     public class DataBody
     {
-        public string vuid { get; set; }
-        public int weight { get; set; }
-        public string wakeup { get; set; }
-        public string gotobed { get; set; }
-        public int steps { get; set; }
-        public int tall { get; set; }
-        public string eatgohan { get; set; }
-        public string receptiondate { get; set; }
+        public string vuid { get; set; } = "";
+        public int weight { get; set; } = 0;
+        public string wakeup { get; set; } = "";
+        public string gotobed { get; set; } = "";
+        public int steps { get; set; } = 0;
+        public int tall { get; set; } = 0;
+        public string eatgohan { get; set; } = "";
+        public string receptiondate { get; set; } = "";
     }
 
     public class vitalDataRoot

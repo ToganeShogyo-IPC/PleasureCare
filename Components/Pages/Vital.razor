@@ -23,6 +23,29 @@
     <!-----
         毎朝記録するやつ
     ----->
+    <p>体温</p>
+    <div class="row mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control form-control-lg" id="taionBox" placeholder="体温" @bind="bodytemp" />
+            <label class="input-group-text">℃</label>
+        </div>
+    </div>
+    <p>血圧</p>
+    <div class="row mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control form-control-lg" id="ketsuatsuUp" placeholder="血圧(収縮)" @bind="ketsuatsuUp" />
+            <label class="input-group-text">／</label>
+            <input type="text" class="form-control form-control-lg" id="ketsuatsuLow" placeholder="血圧(拡張)" @bind="ketsuatsuLow" />
+            <label class="input-group-text">mmHg</label>
+        </div>
+    </div>
+    <p>SpO2</p>
+    <div class="row mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control form-control-lg" id="spoxygenBox" placeholder="SpO2" @bind="spoxygen" />
+            <label class="input-group-text">％</label>
+        </div>
+    </div>
     <p>就寝時間</p>
     <div class="row mb-3">
         <div class="input-group">
@@ -107,6 +130,10 @@
     string weight;
     string tall;
     string steps;
+    string ketsuatsuUp;
+    string ketsuatsuLow;
+    string bodytemp;
+    string spoxygen;
     string wakeuph;
     string wakeupm;
     string gotobedh;

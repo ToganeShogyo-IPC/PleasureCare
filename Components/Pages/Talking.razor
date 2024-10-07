@@ -10,7 +10,7 @@
 </div>
 <div class="row mb-1">
     <div class="col-1">
-        <button class="btn link-light" style="@switchDisp; background-color: #005d64;" @onclick=SpeakText><i class="bi bi-megaphone"></i></button>
+        <button class="btn link-light" style="@switchDisp; background-color: #005d64;" @onclick=SpeakText ><i class="bi bi-megaphone"></i></button>
     </div>
 </div>
 <div class="row">
@@ -130,7 +130,7 @@
     public async void nextQues()
     {
         topMsg = $"設問{nowans + 1}";
-        if (questions.question.Count + 1 == nowans) { NavigationManager.NavigateTo("./"); return; }
+        if (questions.question.Count + 1 == nowans) { NavigationManager.NavigateTo("/"); return; }
         if (questions.question.Count == nowans)
         {
             topMsg = $"";

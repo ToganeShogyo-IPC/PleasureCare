@@ -5,32 +5,17 @@
 @using System.Linq
 
 <div style="@((MarkupString)sw_form)">
-    <p>身長</p>
-    <div class="row mb-3">
-        <div class="input-group">
-            <input type="text" class="form-control form-control-lg" id="shintyoBox" placeholder="身長" @bind="tall" />
-            <label class="input-group-text">cm</label>
-        </div>
-    </div>
-
-    <p>体重</p>
-    <div class="row mb-3">
-        <div class="input-group">
-            <input type="text" class="form-control form-control-lg" id="taijuBox" placeholder="体重" @bind="weight" />
-            <label class="input-group-text">Kg</label>
-        </div>
-    </div>
     <!-----
         毎朝記録するやつ
     ----->
-    <p>体温</p>
+    <h4>体温</h4>
     <div class="row mb-3">
         <div class="input-group">
             <input type="text" class="form-control form-control-lg" id="taionBox" placeholder="体温" @bind="bodytemp" />
             <label class="input-group-text">℃</label>
         </div>
     </div>
-    <p>血圧</p>
+    <h4>血圧</h4>
     <div class="row mb-3">
         <div class="input-group">
             <input type="text" class="form-control form-control-lg" id="ketsuatsuUp" placeholder="血圧(収縮)" @bind="ketsuatsuUp" />
@@ -39,14 +24,14 @@
             <label class="input-group-text">mmHg</label>
         </div>
     </div>
-    <p>SpO2</p>
+    <h4>SpO2</h4>
     <div class="row mb-3">
         <div class="input-group">
             <input type="text" class="form-control form-control-lg" id="spoxygenBox" placeholder="SpO2" @bind="spoxygen" />
             <label class="input-group-text">％</label>
         </div>
     </div>
-    <p>就寝時間</p>
+    <h4>就寝時間</h4>
     <div class="row mb-3">
         <div class="input-group">
             <select class="form-control form-control-lg" id="syuusinHour" @bind="gotobedh">
@@ -68,7 +53,7 @@
         </div>
     </div>
 
-    <p>起床時間</p>
+    <h4>起床時間</h4>
     <div class="row mb-3">
         <div class="input-group">
             <select class="form-control form-control-lg" id="kisyouHour" @bind="wakeuph">
@@ -92,15 +77,8 @@
     <!-----
         毎晩記録するやつ
     ----->
-    <p>歩数</p>
-    <div class="row mb-3">
-        <div class="input-group">
-            <input type="text" class="form-control form-control-lg" id="hosuuBox" placeholder="歩数" @bind="steps" />
-            <label class="input-group-text">歩</label>
-        </div>
-    </div>
 
-    <p>食事内容</p>
+    <h4>食事内容</h4>
     <div class="row mb-3">
         <div class="input-group">
             <textarea class="form-control" id="syokuziBox" rows="3" placeholder="ここに食べたもの(料理名)を入力してください" @bind="eatgohan"></textarea>
@@ -127,9 +105,6 @@
 
 
 @code {
-    string weight;
-    string tall;
-    string steps;
     string ketsuatsuUp;
     string ketsuatsuLow;
     string bodytemp;
@@ -235,9 +210,9 @@
         Dictionary<string, string> vds = new Dictionary<string, string>()
         {
             { "uuid", ShareValues.value.uuid},
-            { "weight",weight},
-            { "tall",tall},
-            { "steps", steps},
+            { "weight","0"},
+            { "tall","0"},
+            { "steps","0"},
             { "gotobed",jikokumaker("goto",gotobedh + ":" + gotobedm)},
             { "wakeup",jikokumaker("wake",wakeuph + ":" + wakeupm)},
             { "eatgohan",ExtGohan(eatgohan).Result},

@@ -92,6 +92,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="Resources\AppIcon\appicofg.svg" />
       <None Remove="Resources\AppIcon\appicon.svg" />
       <None Remove="Resources\AppIcon\appiconfg.svg" />
       <None Remove="Resources\Images\analyze.png" />
@@ -150,6 +151,46 @@
 
     <ItemGroup>
       <Folder Include="wwwroot\lib\momentjs\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiIcon Include="Resources\AppIcon\appicofg.svg" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="C:\Users\siraisi\.nuget\packages\mecab.dotnet\1.2.0\build\..\content\dic\dicrc">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="C:\Users\siraisi\.nuget\packages\mecab.dotnet\1.2.0\build\..\content\dic\char.bin">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="C:\Users\siraisi\.nuget\packages\mecab.dotnet\1.2.0\build\..\content\dic\matrix.bin">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="C:\Users\siraisi\.nuget\packages\mecab.dotnet\1.2.0\build\..\content\dic\README.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="C:\Users\siraisi\.nuget\packages\mecab.dotnet\1.2.0\build\..\content\dic\sys.dic">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="C:\Users\siraisi\.nuget\packages\mecab.dotnet\1.2.0\build\..\content\dic\unk.dic">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
